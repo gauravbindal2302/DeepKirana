@@ -1,0 +1,136 @@
+.about-page {
+  height: auto;
+  width: 100vw;
+}
+.about-r1 {
+  height: auto;
+  width: 100vw;
+  background: #f1f1f1;
+  padding: 40px 100px;
+}
+.about-r1 h1 {
+  font-family: "Kanit", sans-serif;
+  color: #173334;
+  margin-top: 5px;
+  font-size: 3rem;
+  text-align: center;
+}
+.about-r1 p {
+  text-align: center;
+  width: 80%;
+  margin: 20px auto;
+  font-size: 0.9rem;
+}
+.about-r2,
+.about-r3 {
+  height: 27.5vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+}
+.about-r2-c1 {
+  width: 40vw;
+  display: inline-block;
+  font-family: "Kanit", sans-serif;
+  color: #173334;
+  font-size: 3rem;
+  text-align: center;
+}
+.about-r2-c1 h1 {
+  font-size: 3rem;
+}
+.about-r2-c2 {
+  width: 60vw;
+  padding: 35px 60px;
+  display: inline-block;
+}
+.about-r2-c2 p,
+.about-r3-c1 p {
+  font-size: 0.9rem;
+}
+
+.about-r3-c2 {
+  width: 40vw;
+  display: inline-block;
+  font-family: "Kanit", sans-serif;
+  color: #173334;
+  font-size: 3rem;
+  text-align: center;
+}
+.about-r3-c2 h1 {
+  font-size: 3rem;
+}
+.about-r3-c1 {
+  width: 60vw;
+  padding: 35px 60px;
+  display: inline-block;
+}
+.about-r4 {
+  height: 40vh;
+  padding: 7.5vh 10vw;
+}
+.about-r4-columns {
+  height: 25vh;
+  width: 25vw;
+  border: 1px solid #173334;
+  display: inline-block;
+  margin-right: 1.6vw;
+  text-align: center;
+  padding: 20px;
+}
+.about-r4-columns h1 {
+  font-family: "Kanit", sans-serif;
+  color: #173334;
+  font-size: 2.4rem;
+}
+@media only screen and (max-width: 800px) {
+  .about-r1 {
+    padding: 20px 20px 40px 20px;
+  }
+  .about-r1 h1 {
+    font-size: 1.9rem;
+  }
+  .about-r1 p {
+    font-size: 0.8rem;
+    margin: 0px auto;
+  }
+  .about-r2,
+  .about-r3,
+  .about-r4 {
+    height: auto;
+  }
+  .about-r3 {
+    margin-top: -30px;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .about-r2-c1,
+  .about-r2-c2,
+  .about-r3-c1,
+  .about-r3-c2 {
+    width: 100%;
+  }
+  .about-r2-c1 h1,
+  .about-r3-c2 h1 {
+    padding: 30px 60px 0 60px;
+    font-size: 1.4rem;
+    text-align: left;
+  }
+  .about-r2-c2 p,
+  .about-r3-c1 p {
+    margin-top: -20px;
+    font-size: 0.8rem;
+  }
+  .about-r4 {
+    padding: 0 10vw 5vh 10vw;
+  }
+  .about-r4-columns {
+    width: 70vw;
+    padding: 10px 20px;
+    margin: 20px 5vw;
+  }
+  .about-r4-columns h1 {
+    font-size: 1.4rem;
+    margin: 10px;
+  }
+}

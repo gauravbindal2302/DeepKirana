@@ -1,0 +1,159 @@
+.small-container {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+#row {
+  height: 72.1vh;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: -46px;
+}
+
+#ProductImg {
+  max-height: 380px;
+  max-width: auto;
+  object-fit: contain;
+  display: flex;
+  padding-left: 100px;
+}
+
+#col-2 {
+  width: 50%;
+}
+
+.navigator {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.h1 {
+  font-size: 1.8rem;
+  line-height: 2;
+}
+
+.h4 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 7px 10px 0 0;
+  color: #555;
+  display: inline-block;
+}
+
+.h6 {
+  font-size: 0.9rem;
+  text-decoration: 0.1rem solid line-through;
+  color: #868585;
+  display: inline-block;
+}
+.h5 {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 12px;
+  background: #dedbdb;
+  padding: 1px 4px;
+  border-radius: 5px;
+}
+
+.quantity {
+  display: flex;
+  margin: -10px 0 20px 0;
+  align-items: center;
+}
+.quantity select {
+  height: 26px;
+  padding: 0px 12px;
+  border: 1px solid #9c918f;
+  border-radius: 5px;
+  font-size: 13px;
+  margin-right: 10px;
+}
+
+input {
+  width: 60px;
+  height: 26px;
+  padding: 0px 5px;
+  font-size: 15px;
+  border: 1px solid #9c918f;
+  border-radius: 5px;
+}
+
+.quantity p {
+  margin-left: 10px;
+  font-size: small;
+}
+input:focus {
+  outline: none;
+}
+
+h3 {
+  font-size: 1.1rem;
+}
+
+.icon {
+  color: #ff523b;
+  margin-left: 10px !important;
+}
+
+.description {
+  font-size: 0.9rem;
+}
+
+.AddToCart {
+  height: 40px;
+  width: 150px;
+  margin-top: 24px;
+}
+
+.AddToCart:hover {
+  color: #febd2f;
+  background-color: #173334;
+}
+
+@media screen and (max-width: 796px) {
+  .small-container {
+    margin-top: 30px;
+    margin-bottom: -50px;
+  }
+  .col-2 {
+    flex-basis: 100%;
+  }
+  .row {
+    text-align: left;
+  }
+  #ProductImg {
+    width: 300px;
+    height: 300px;
+    display: block;
+    margin: 0 auto;
+  }
+  p {
+    font-size: 0.8rem;
+  }
+  h1 {
+    font-size: 24px;
+    color: #000;
+  }
+  h4 {
+    font-size: 1.2rem;
+    display: inline-block;
+    color: #555;
+  }
+  h6 {
+    color: #868585;
+    font-size: 4rem;
+    display: inline-block;
+  }
+  h3 {
+    margin-top: 20px;
+  }
+  .description {
+    font-size: 0.9rem;
+  }
+  .AddToCart {
+    height: 30px;
+    width: 120px;
+  }
+}

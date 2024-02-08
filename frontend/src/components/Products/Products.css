@@ -1,0 +1,146 @@
+.products {
+  display: flex;
+}
+.list {
+  width: 18vw;
+  background-color: #e0dbdb;
+}
+.list h1 {
+  margin: 6px 4px;
+  width: calc(100% - 8px);
+  text-align: start;
+  border-radius: 2px;
+  padding: 10px 15px;
+  font-size: 1.2rem;
+  background: #9b9a9a;
+  color: #343333;
+  cursor: pointer;
+}
+.list ul {
+  padding: 5px px;
+}
+.list ul span {
+  padding-left: 5px;
+  font-weight: 600;
+}
+.list ul li {
+  margin: 3px 4px;
+  list-style: none;
+}
+
+.list ul li .list-btn {
+  border-radius: 2px;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  padding-left: 20px;
+  background-color: #d0cece;
+}
+.list ul li .list-btn:hover {
+  background-color: #c1c0bd;
+  transition: none;
+}
+.small-container {
+  margin: auto;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+.row-2 {
+  margin: 10px auto 50px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.row-2 select {
+  width: 170px;
+  border-radius: 5px;
+  padding: 5px 15px;
+  letter-spacing: 1px;
+  border: 1px solid #133334;
+  font-size: small;
+}
+
+.products-list {
+  margin-top: -20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.product {
+  overflow: hidden;
+  margin-bottom: 50px;
+  transition: transform 0.5s;
+  padding: 15px 10px;
+  border-radius: 10px;
+}
+.product:hover {
+  transform: translateY(-5px);
+  border: 1px solid #a29e9e;
+}
+.product img {
+  width: 100%;
+}
+.product h4 {
+  margin: 5px 0;
+  inline-size: auto;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  font-size: 1.1rem;
+  color: #000;
+}
+.product p {
+  font-size: 1.1rem;
+  line-height: 15px;
+  font-weight: bold;
+  display: inline;
+  color: #555;
+}
+.product h6 {
+  display: inline;
+  margin-left: 10px;
+  font-size: 0.9rem;
+  text-decoration: 0.1rem solid line-through;
+  color: #868585;
+}
+
+@media (max-width: 1024px) {
+  /* for tablet */
+  .products-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .list {
+    display: none;
+  }
+  h2 {
+    font-size: 1.2rem;
+  }
+  select {
+    font-size: 0.6rem;
+  }
+  .products-list {
+    margin-top: -50px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .product h4 {
+    font-size: 1rem;
+    margin-bottom: -4px;
+  }
+  .product p {
+    font-size: 1rem;
+  }
+  .product h6 {
+    font-size: 0.7rem;
+  }
+  .BuyNow-Btn {
+    margin-top: 5px;
+    font-size: 11px;
+    padding: 4px 7px;
+  }
+  .AddToCart-Btn {
+    margin-top: 8px;
+    font-size: 12px;
+    padding: 4px 9px;
+  }
+}

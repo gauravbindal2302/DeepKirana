@@ -1,0 +1,134 @@
+@import url("https://fonts.googleapis.com/css2?family=Kanit:wght@700&display=swap");
+
+.categories-container {
+  background-color: #d8f3f3;
+  padding: 3% 10% 5% 10%;
+}
+.main-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.main-title h1,
+button,
+.category-title {
+  display: inline-block;
+}
+.main-title h1 {
+  font-family: "Kanit", sans-serif;
+  font-size: 3rem;
+  margin: 0;
+  color: #173334;
+}
+button {
+  justify-self: flex-end;
+  justify-items: end;
+  padding: 6px 20px;
+  color: #173334;
+  background-color: #febd2f;
+  border-radius: 8px;
+  border: 1px solid #173334;
+  font-weight: 600;
+  transition: 0.4s ease-in-out;
+}
+.main-title button:hover,
+.GoToCategoryBtn:hover {
+  color: #febd2f;
+  background-color: #173334;
+}
+.categories-outer {
+  overflow: hidden;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.categories-row {
+  display: flex;
+  flex-wrap: nowrap;
+  margin: 10px;
+  animation: marquee 50s linear infinite;
+}
+.category {
+  transition: transform 0.4s;
+  margin-right: 25px;
+}
+.category:last-child {
+  margin-right: 0;
+}
+.category img {
+  width: 18vw;
+  height: 30vh;
+  border-radius: 10px;
+  display: block;
+}
+.category:hover {
+  transform: scale(1.05);
+}
+.category-information {
+  margin: 10px 0 0 10px;
+}
+.GoToCategoryBtn {
+  margin-top: 5px;
+  padding: 6px;
+  font-size: 0.7rem;
+}
+
+.category-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(
+      -200%
+    ); /* move twice the width of categories container */
+  }
+}
+
+.categories-row:hover {
+  animation-play-state: paused;
+}
+
+.categories-row:not(:hover) {
+  animation-play-state: running;
+}
+
+@media only screen and (max-width: 800px) {
+  .categories-container {
+    padding: 5% 10%;
+  }
+  .main-title h1 {
+    font-size: 1.4rem;
+  }
+  .main-title button {
+    width: 30vw;
+    font-size: 0.7rem;
+  }
+  .categories-outer {
+    margin-top: 20px;
+  }
+  .categories-row {
+    animation: marquee 20s linear infinite;
+  }
+  .category {
+    margin-right: 20px;
+  }
+  .category img {
+    width: 40vw;
+    height: 20vh;
+  }
+  .category-information {
+    margin: 10px 0 0 5px;
+  }
+  .GoToCategoryBtn {
+    padding: 4px;
+    font-size: 0.6rem;
+  }
+  .category-title {
+    font-size: 1.1rem;
+  }
+}

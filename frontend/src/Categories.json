@@ -1,0 +1,244 @@
+{
+  "categories": [
+      {
+          "categoryName": "Cereals",
+          "products": [
+              {
+                "id": "1",
+                "title": "Bajra",
+                "image": "Images/product-1.jpg",
+                "img": "https://images.unsplash.com/photo-1675788555085-d244c05f1d10?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8NDkyMjMwNzl8fGVufDB8fHx8&auto=format&fit=crop&w=420&q=60",
+                 "price": "₹10.00",
+                "mrp": "₹12.00",
+                "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              },
+              {
+                "id": "2",
+                "title": "Wheat",
+                "image": "Images/product-2.jpg",
+                "price": "₹20.00",
+                "mrp": "₹12.00",
+                "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+              },
+              {
+                "id": "3",
+                "title": "Barley",
+                "image": "Images/product-3.jpg",
+                "price": "₹30.00",
+                "mrp": "₹12.00",
+                "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+              },
+              {
+                "id": "4",
+                "title": "Millet",
+                "image": "Images/product-4.jpg",
+                "price": "₹40.00",
+                "mrp": "₹12.00",
+                "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+              },
+              {
+                "id": "5",
+                "title": "Maize",
+                "image": "Images/product-6.jpg",
+                "price": "₹50.00",
+                "mrp": "₹12.00",
+                "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"                            
+              }
+          ],
+          "image": "Images/category-1.jpg",
+          "content": "This is Cereals.",
+          "icon": "bowl-rice"
+      },
+      {
+          "categoryName": "Pulses",
+          "products": [
+            {
+              "id": "6",
+              "title": "Toor Dal",
+              "image": "Images/product-5.jpg",
+              "price": "₹50.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"                      
+            },
+            {
+              "id": "7",
+              "title": "Urad Dal",
+              "image": "Images/product-6.jpg",
+              "price": "₹60.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "8",
+              "title": "Moong Dal",
+              "image": "Images/product-7.jpg",
+              "price": "₹70.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"                          
+            },
+            {
+              "id": "9",
+              "title": "Chana Dal",
+              "image": "Images/product-8.jpg",
+              "price": "₹80.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"                          
+            },
+            {
+              "id": "10",
+              "title": "Moong",
+              "image": "Images/product-9.jpg",
+              "price": "₹90.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            }
+        ],
+          "image": "Images/category-2.jpg",
+          "content": "This is Pulses.",
+          "icon": "bowl-rice"
+      },
+      {
+          "categoryName": "Rice",
+          "products": [
+            {
+              "id": "11",
+              "title": "Nawazish",
+              "image": "Images/product-9.jpg",
+              "price": "₹90.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "12",
+              "title": "Double Chabi",
+              "image": "Images/product-10.jpg",
+              "price": "₹100.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "13",
+              "title": "Sela",
+              "image": "Images/product-11.jpg",
+              "price": "₹110.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "14",
+              "title": "Golden Basmati",
+              "image": "Images/product-12.jpg",
+              "price": "₹120.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "15",
+              "title": "Daawat",
+              "image": "Images/product-1.jpg",
+              "price": "₹130.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            }
+        ],
+          "image": "Images/category-3.jpg",
+          "content": "This is Rice.",
+          "icon": "bowl-rice"
+      },
+      {
+          "categoryName": "Spices",
+          "products": [
+            {
+              "id": "16",
+              "title": "Lal Mirch",
+              "image": "Images/product-1.jpg",
+              "price": "₹130.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "17",
+              "title": "Namak",
+              "image": "Images/product-2.jpg",
+              "price": "₹140.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "18",
+              "title": "Dhaniya",
+              "image": "Images/product-3.jpg",
+              "price": "₹150.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "19",
+              "title": "Haldi",
+              "image": "Images/product-4.jpg",
+              "price": "₹160.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "20",
+              "title": "Garam Masala",
+              "image": "Images/product-7.jpg",
+              "price": "₹170.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            }
+        ],
+          "image": "Images/category-1.jpg",
+          "content": "This is Spices.",
+          "icon": "bowl-rice"
+      },
+      {
+          "categoryName": "Merchant",
+          "products": [
+            {
+              "id": "21",
+              "title": "Dyna Soap",
+              "image": "Images/product-5.jpg",
+              "price": "₹170.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "22",
+              "title": "Lifebuoy Soap",
+              "image": "Images/product-6.jpg",
+              "price": "₹180.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "23",
+              "title": "Rin Soap",
+              "image": "Images/product-7.jpg",
+              "price": "₹190.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "24",
+              "title": "Vim Bar",
+              "image": "Images/product-8.jpg",
+              "price": "₹200.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            },
+            {
+              "id": "25",
+              "title": "Ezee wash",
+              "image": "Images/product-1.jpg",
+              "price": "₹10.00",
+              "mrp": "₹12.00",
+              "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quiplaceat deserunt repellat natus quae obcaecati, soluta deleniti"              
+            }
+        ],
+          "image": "Images/category-2.jpg",
+          "content": "This is Merchant.",
+          "icon": "bowl-rice"
+      }
+  ]
+}

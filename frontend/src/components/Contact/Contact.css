@@ -1,0 +1,152 @@
+@import url("https://fonts.googleapis.com/css2?family=Kanit:wght@700&display=swap");
+
+.contact-row {
+  display: flex;
+  text-align: left;
+  width: 100vw;
+}
+.contact-column-1 {
+  height: 100%;
+  width: 50%;
+}
+.contact-c1-r1 {
+  background-color: #f1f1f1;
+  height: auto;
+  width: 100%;
+  padding: 60px 100px 80px 100px;
+}
+.contact-c1-r1 h1 {
+  font-family: "Kanit", sans-serif;
+  color: #173334;
+  margin-top: 5px;
+  font-size: 3rem;
+}
+.contact-c1-r1 i {
+  border: 2px solid #173334;
+  border-radius: 50%;
+  padding: 5px;
+  font-size: 10px;
+  color: #173334;
+}
+.contact-c1-r1 span {
+  font-size: 0.9rem;
+  margin: 0px 10px;
+}
+.contact-c1-r1 p {
+  font-size: 0.9rem;
+}
+.contact-c1-r2 {
+  height: auto;
+  width: 100%;
+  padding: 40px 100px 80px 100px;
+}
+.call-email {
+  display: flex;
+  margin-bottom: 30px;
+}
+.call-email-address h2 {
+  font-family: "Kanit", sans-serif;
+  color: #173334;
+  font-size: 1.5rem;
+}
+.call-email-address p {
+  font-size: 1rem;
+  margin-top: 10px;
+}
+.email {
+  margin-left: 100px;
+}
+.contact-column-2 {
+  width: 50vw;
+  padding: 60px 80px;
+}
+.contact-form {
+  width: 100%;
+}
+
+.contact-form span {
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.contact-form input[type="name"],
+.contact-form input[type="email"],
+.contact-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  background-color: #f0f0f0;
+  resize: none;
+}
+
+.contact-form textarea {
+  height: 120px;
+}
+
+.contact-submit {
+  background-color: #173334;
+  color: white;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 768px) {
+  .contact-row {
+    display: block;
+  }
+  .contact-column-1,
+  .contact-column-2 {
+    height: auto;
+    width: 100%;
+  }
+  .contact-c1-r1 {
+    padding: 40px 60px;
+  }
+  .contact-c1-r1 h1 {
+    font-size: 1.9rem;
+  }
+  .contact-c1-r1 span {
+    font-size: 0.8rem;
+  }
+  .contact-c1-r1 p {
+    font-size: 0.8rem;
+  }
+  .contact-c1-r2 {
+    padding: 30px 60px;
+  }
+  .call-email {
+    margin-bottom: 20px;
+  }
+  .call-email-address h2 {
+    font-size: 1.4rem;
+  }
+  .call-email-address p {
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+  .email {
+    margin-left: 40px;
+  }
+  .contact-column-2 {
+    padding: 20px 60px;
+  }
+  .contact-form input[type="name"],
+  .contact-form input[type="email"],
+  .contact-form input[type="number"],
+  .contact-form textarea {
+    font-size: 0.8rem;
+  }
+  .contact-form textarea {
+    height: 120px;
+  }
+  .contact-submit {
+    font-size: 0.9rem;
+  }
+}

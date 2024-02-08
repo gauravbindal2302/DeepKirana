@@ -1,0 +1,142 @@
+.small-container {
+  max-width: 1080px;
+  margin: auto;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-top: 3%;
+}
+#featuredProducts {
+  padding-bottom: 30px;
+}
+.title {
+  text-align: center;
+  margin: 0 auto 50px auto;
+  position: relative;
+  line-height: 60px;
+  color: #555;
+}
+
+.title::after {
+  content: "";
+  background: #ff523b;
+  width: 80px;
+  height: 5px;
+  border-radius: 5px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.carousel-box {
+  padding: 5px 10px 0 0;
+  width: 101%;
+}
+.react-multiple-carousel__arrow {
+  position: absolute;
+  top: 40%;
+  width: 40px;
+}
+.carousel-box .react-multiple-carousel__arrow--left {
+  left: 0px;
+}
+
+.carousel-box .react-multiple-carousel__arrow--right {
+  right: 0px;
+}
+.col-4 {
+  padding: 15px 10px;
+  min-width: 150px;
+  margin-bottom: 50px;
+  transition: transform 0.5s;
+  border-radius: 10px;
+}
+
+.col-4 img {
+  width: 100%;
+}
+
+.col-4 h4 {
+  margin: 5px 0;
+  inline-size: auto;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  font-size: 1.1rem;
+  color: #000;
+}
+
+.col-4 p {
+  font-size: 1.1rem;
+  line-height: 15px;
+  font-weight: bold;
+  display: inline;
+  color: #555;
+}
+.col-4 h6 {
+  display: inline;
+  margin-left: 10px;
+  font-size: 0.9rem;
+  text-decoration: 0.1rem solid line-through;
+  color: #868585;
+}
+.col-4:hover {
+  transform: translateY(-5px);
+  border: 1px solid #a29e9e;
+}
+.BuyNow-Btn {
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: 2px solid #868585;
+  background-color: transparent;
+  outline: none;
+  margin-right: 15px;
+}
+.BuyNow-Btn:hover {
+  background-color: #eee3e3;
+  border: 2px solid #2f4f50;
+}
+
+.AddToCart-Btn {
+  margin-top: 10px;
+  padding: 5px 10px;
+}
+.AddToCart-Btn:hover {
+  background-color: #173334;
+  color: #febd2f;
+}
+
+@media only screen and (max-width: 800px) {
+  #featuredProducts {
+    padding-bottom: 50px;
+  }
+  .title {
+    margin: 0 auto 20px auto;
+    line-height: 40px;
+  }
+  .title::after {
+    width: 50px;
+    height: 4px;
+  }
+  .carousel-box {
+    width: 102%;
+  }
+  .col-4 h4 {
+    font-size: 1rem;
+    margin-bottom: -4px;
+  }
+  .col-4 p {
+    font-size: 1rem;
+  }
+  .col-4 h6 {
+    font-size: 0.7rem;
+  }
+  .BuyNow-Btn {
+    margin-top: 5px;
+    font-size: 11px;
+    padding: 4px 7px;
+  }
+  .AddToCart-Btn {
+    margin-top: 8px;
+    font-size: 12px;
+    padding: 4px 9px;
+  }
+}

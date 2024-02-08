@@ -1,0 +1,99 @@
+.admin-page {
+  height: auto;
+  width: 100vw;
+  background: #f1f1f1;
+}
+.header-1 {
+  width: 100vw;
+  background: #000;
+  color: #febd2f;
+  background: #173334;
+  justify-content: space-between;
+  align-items: center;
+  padding: 26px 50px 26px 163px;
+}
+.log-reg {
+  color: #f6f6f6;
+  position: absolute;
+  top: 37px;
+  right: 163px;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+.go-to-dashboard {
+  color: #4b8653;
+  position: absolute;
+  top: 37px;
+  right: 150px;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+.log-reg:hover,
+.go-to-dashboard:hover {
+  color: #c7b55d;
+}
+.admin-btn:hover {
+  background-color: #173334;
+  color: #febd2f;
+  border: 0.01rem solid #febd2f;
+}
+.CRUD {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 30px;
+  grid-gap: 30px;
+  position: absolute;
+  top: 0;
+  left: 28%;
+}
+.CRUD-button {
+  width: 100%;
+  padding: 6px 30px;
+  background-color: #febd2f;
+  color: #173334;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.1s ease-in-out;
+  border: 0.01rem solid #315636;
+}
+.CRUD-button:hover {
+  background-color: #173334;
+  color: #febd2f;
+  border: 0.01rem solid #febd2f;
+}
+@media only screen and (max-width: 800px) {
+  .admin-page {
+    height: auto;
+    width: 100vw;
+    overflow: hidden;
+  }
+  .header-1 {
+    padding: 24px 50px 24px 30px;
+  }
+  .log-reg {
+    top: 42px;
+    right: 30px;
+    font-size: 0.8rem;
+  }
+  .go-to-dashboard {
+    top: 22px;
+    right: 30px;
+    font-size: 0.7rem;
+  }
+}
+@media only screen and (max-width: 1500px) {
+  .CRUD {
+    background-color: #173334;
+    padding: 5px 20px 10px 20px;
+    width: 100vw;
+    top: auto;
+    grid-gap: 15px;
+    left: 0;
+  }
+  .CRUD-button {
+    width: 100%;
+    padding: 4px 15px;
+  }
+}

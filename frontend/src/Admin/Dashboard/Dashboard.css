@@ -1,0 +1,63 @@
+.admin-header {
+  height: auto;
+  padding: 10px 90px;
+  margin: 40px 150px 30px 150px;
+  border: 1px solid #000;
+  border-radius: 10px;
+}
+.admin-header h1,
+.orders-row h1 {
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 20px;
+}
+
+.operations {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.orders-row {
+  height: auto;
+  padding: 10px 90px;
+  margin: 20px 150px 30px 150px;
+  border: 1px solid #000;
+  border-radius: 10px;
+}
+.order-buttons {
+  margin: 0 10px 15px 15px;
+}
+.order-buttons button {
+  width: 100%;
+}
+
+.admin-button {
+  margin: auto;
+  padding: 8px 100px;
+  background-color: #febd2f;
+  color: #173334;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.1s ease-in-out;
+  border: 0.01rem solid #315636;
+}
+.admin-button:hover {
+  background-color: #173334;
+  color: #febd2f;
+  border: 0.01rem solid #febd2f;
+}
+@media only screen and (max-width: 800px) {
+  .admin-header,
+  .orders-row {
+    padding: 30px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 25px;
+  }
+  .admin-button {
+    width: 100%;
+    padding: 6px 30px;
+  }
+}
