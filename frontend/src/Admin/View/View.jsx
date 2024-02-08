@@ -29,7 +29,9 @@ export default function View({ title }) {
 
   const getCategoryNames = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/categories");
+      const response = await axios.get(
+        "https://deep-kirana-server.vercel.app/categories"
+      );
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -120,7 +122,7 @@ export default function View({ title }) {
                     {selectedProductDetails.productImage && (
                       <img
                         src={
-                          "http://localhost:5000/uploads/" +
+                          "https://deep-kirana-server.vercel.app/uploads/" +
                           selectedProductDetails.productImage
                         }
                         alt={selectedProductDetails.productName}

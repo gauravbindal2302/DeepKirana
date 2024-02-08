@@ -35,7 +35,7 @@ export default function Account() {
     const { email, password, forgotPassword } = admin;
     if (forgotPasswordMode && email && forgotPassword) {
       axios
-        .post("http://localhost:5000/forgot-password", {
+        .post("https://deep-kirana-server.vercel.app/forgot-password", {
           email,
           newPassword: forgotPassword,
         })
@@ -58,7 +58,7 @@ export default function Account() {
         });
     } else if (!forgotPasswordMode && email && password) {
       axios
-        .post("http://localhost:5000/login", admin)
+        .post("https://deep-kirana-server.vercel.app/login", admin)
         .then((res) => {
           handleLogin(res.data.token);
         })
@@ -87,7 +87,7 @@ export default function Account() {
       alert("Please fill in all fields!");
     } else {
       axios
-        .post("http://localhost:5000/register", admin)
+        .post("https://deep-kirana-server.vercel.app/register", admin)
         .then((res) => {
           alert(res.data.message);
           setLoginVisible(true);

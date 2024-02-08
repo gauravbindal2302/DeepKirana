@@ -16,7 +16,9 @@ export default function FeaturedProducts() {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/categories");
+      const response = await axios.get(
+        "https://deep-kirana-server.vercel.app/categories"
+      );
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -25,10 +27,14 @@ export default function FeaturedProducts() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/products");
+      const response = await axios.get(
+        "https://deep-kirana-server.vercel.app/products"
+      );
       const productsWithImageUrl = response.data.map((product) => ({
         ...product,
-        image: "http://localhost:5000/uploads/" + product.productImage,
+        image:
+          "https://deep-kirana-server.vercel.app/uploads/" +
+          product.productImage,
       }));
       setProducts(productsWithImageUrl);
     } catch (error) {

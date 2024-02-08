@@ -35,7 +35,7 @@ export default function Add({ title }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/admin/dashboard/add",
+        "https://deep-kirana-server.vercel.app/admin/dashboard/add",
         formData,
         {
           headers: {
@@ -58,7 +58,9 @@ export default function Add({ title }) {
 
   const getCategoryNames = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/categories");
+      const response = await axios.get(
+        "https://deep-kirana-server.vercel.app/categories"
+      );
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -99,7 +101,7 @@ export default function Add({ title }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/admin/dashboard/add-product",
+        "https://deep-kirana-server.vercel.app/admin/dashboard/add-product",
         formData,
         {
           headers: {

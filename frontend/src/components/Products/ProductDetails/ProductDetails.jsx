@@ -17,7 +17,7 @@ export default function ProductDetails() {
     const fetchProduct = async () => {
       try {
         const categoriesResponse = await axios.get(
-          "http://localhost:5000/categories"
+          "https://deep-kirana-server.vercel.app/categories"
         );
         // Fetch all products with their categories
         const productsWithImageUrl = categoriesResponse.data.reduce(
@@ -26,7 +26,9 @@ export default function ProductDetails() {
             ...category.products.map((product) => ({
               ...product,
               category: category.category, // Add category to the product object
-              image: "http://localhost:5000/uploads/" + product.productImage,
+              image:
+                "https://deep-kirana-server.vercel.app/uploads/" +
+                product.productImage,
             })),
           ],
           []
