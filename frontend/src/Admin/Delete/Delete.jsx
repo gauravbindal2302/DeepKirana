@@ -35,7 +35,7 @@ export default function Delete({ title }) {
 
     try {
       await axios.delete(
-        `https://deep-kirana-server.vercel.app/admin/dashboard/delete/${selectedCategory1}`
+        `http://localhost:5000/admin/dashboard/delete/${selectedCategory1}`
       );
       alert(`Category (${selectedCategory1}) deleted successfully!`);
       setSelectedCategory1("");
@@ -54,7 +54,7 @@ export default function Delete({ title }) {
 
     try {
       await axios.delete(
-        `https://deep-kirana-server.vercel.app/admin/dashboard/delete/${selectedCategory2}/${selectedProduct}`
+        `http://localhost:5000/admin/dashboard/delete/${selectedCategory2}/${selectedProduct}`
       );
       alert(`Product (${selectedProduct}) deleted successfully!`);
       setSelectedProduct("");
@@ -66,9 +66,7 @@ export default function Delete({ title }) {
 
   const getCategoryNames = async () => {
     try {
-      const response = await axios.get(
-        "https://deep-kirana-server.vercel.app/categories"
-      );
+      const response = await axios.get("http://localhost:5000/categories");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);

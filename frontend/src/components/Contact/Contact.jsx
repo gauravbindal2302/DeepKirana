@@ -38,11 +38,9 @@ export default function Contact({ title }) {
     ) {
       alert("Please fill all the fields.");
     } else {
-      axios
-        .post("https://deep-kirana-server.vercel.app/contact", form)
-        .then((res) => {
-          alert(res.data.message);
-        });
+      axios.post("http://localhost:5000/contact", form).then((res) => {
+        alert(res.data.message);
+      });
     }
   }
 

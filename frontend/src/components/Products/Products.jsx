@@ -21,9 +21,7 @@ export default function Products({ title }) {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(
-        "https://deep-kirana-server.vercel.app/categories"
-      );
+      const response = await axios.get("http://localhost:5000/categories");
       setCategories(response.data);
       // Fetch all products with their categories
       const productsWithImageUrl = response.data.reduce(
@@ -32,9 +30,7 @@ export default function Products({ title }) {
           ...category.products.map((product) => ({
             ...product,
             category: category.category, // Add category to the product object
-            image:
-              "https://deep-kirana-server.vercel.app/uploads/" +
-              product.productImage,
+            image: "http://localhost:5000/uploads/" + product.productImage,
           })),
         ],
         []

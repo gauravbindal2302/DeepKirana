@@ -16,9 +16,7 @@ export default function Home({ title }) {
 
   const getCategoryNames = async () => {
     try {
-      const response = await axios.get(
-        "https://deep-kirana-server.vercel.app/categories"
-      );
+      const response = await axios.get("http://localhost:5000/categories");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
