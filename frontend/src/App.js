@@ -14,6 +14,7 @@ import View from "./Admin/View/View";
 import Update from "./Admin/Update/Update";
 import Delete from "./Admin/Delete/Delete";
 import OrderedOrders from "./Admin/OrdersReceived/OrdersReceived";
+import MessagesReceived from "./Admin/MessagesReceived/MessagesReceived";
 
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -73,6 +74,10 @@ export default function App() {
         <Route
           path="/admin/dashboard/ordersReceived"
           element={<OrderedOrders title="Deep Store - Admin | Orders" />}
+        />
+        <Route
+          path="/admin/dashboard/messagesReceived"
+          element={<MessagesReceived title="Deep Store - Admin | Messages" />}
         />
       </Routes>
       {isScrolled && (

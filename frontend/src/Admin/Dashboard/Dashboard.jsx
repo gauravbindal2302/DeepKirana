@@ -47,6 +47,16 @@ export default function Dashboard({ title }) {
           </Link>
         </div>
       </div>
+      <div className="messages-received">
+        <h1>Messages Received</h1>
+        <div className="order-buttons">
+          <Link to="/admin/dashboard/messagesReceived">
+            <button type="submit" className="admin-button">
+              Check Messages
+            </button>
+          </Link>
+        </div>
+      </div>
     </>
   );
 }

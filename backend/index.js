@@ -395,12 +395,14 @@ const contactSchema = new mongoose.Schema({
   email: String,
   phone: String,
   message: String,
+  timestamp: Date,
 });
 const Contact = mongoose.model("Contact", contactSchema);
 
 // Route handler for submitting the contact details
 server.post("/contact", async (req, res) => {
   const { fName, lName, email, phone, message } = req.body;
+
   try {
     const newContact = new Contact({
       fName,
@@ -413,6 +415,17 @@ server.post("/contact", async (req, res) => {
     res.send({ message: "Form submitted successfully" });
   } catch (error) {
     console.error("Error submitting contact form:", error);
+    res.sendStatus(500);
+  }
+});
+
+// Route handler for fetching messages
+server.get("/getContacts", async (req, res) => {
+  try {
+    const contacts = await Contact.find({});
+    res.send(contacts);
+  } catch (error) {
+    console.error("Error fetching contacts:", error);
     res.sendStatus(500);
   }
 });

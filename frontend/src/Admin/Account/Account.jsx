@@ -17,6 +17,7 @@ export default function Account() {
     username: "",
     email: "",
     password: "",
+    forgotPassword: "", // Add forgotPassword field
   });
 
   const handleLogin = (userToken) => {
@@ -36,28 +37,6 @@ export default function Account() {
     setLoginVisible(true);
     const { email, password, forgotPassword } = admin;
     if (forgotPasswordMode && email && forgotPassword) {
-      axios
-        .post(`${SERVER_URL}/forgot-password`, {
-          email,
-          newPassword: forgotPassword,
-        })
-        .then((res) => {
-          alert(res.data.message);
-          setForgotPasswordMode(false); // Reset forgotPasswordMode to false after successful update
-          resetForm(); // Reset the form
-        })
-        .catch((error) => {
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.error
-          ) {
-            alert(error.response.data.error);
-          } else {
-            alert("Password update failed. Please try again later.");
-          }
-          console.error(error);
-        });
     } else if (!forgotPasswordMode && email && password) {
       axios
         .post(`${SERVER_URL}/login`, admin)
@@ -65,17 +44,7 @@ export default function Account() {
           handleLogin(res.data.token);
         })
         .catch((error) => {
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.error
-          ) {
-            alert(error.response.data.error);
-          } else {
-            alert("Login failed. Please try again later.");
-          }
-          resetForm();
-          console.error(error);
+          handleAPIError(error);
         });
     } else {
       alert("Please fill in all fields!");
@@ -95,18 +64,13 @@ export default function Account() {
           setLoginVisible(true);
         })
         .catch((error) => {
-          if (
-            error.response &&
-            error.response.data &&
-            error.response.data.error
-          ) {
-            alert(error.response.data.error);
-          } else {
-            alert("Registration failed, Please try again later!");
-          }
-          console.error(error);
+          handleAPIError(error);
         });
     }
+  };
+
+  const handleForgotPasswordClick = () => {
+    setForgotPasswordMode(true);
   };
 
   function resetForm() {
@@ -114,11 +78,18 @@ export default function Account() {
       username: "",
       email: "",
       password: "",
+      forgotPassword: "", // Reset forgotPassword field
     });
   }
 
-  const handleForgotPasswordClick = () => {
-    setForgotPasswordMode(true);
+  const handleAPIError = (error) => {
+    if (error.response && error.response.data && error.response.data.error) {
+      alert(error.response.data.error);
+    } else {
+      alert("An error occurred. Please try again later.");
+    }
+    console.error(error);
+    resetForm();
   };
 
   return (
@@ -131,10 +102,10 @@ export default function Account() {
           <div className="account-page">
             <div className="container">
               <div className="row account-row">
-                <div className="col-2 col-lg-6">
+                <div className="col-12 col-lg-6">
                   <img alt="" src="Images/image-1.png" width="100%" />
                 </div>
-                <div className="col-2 col-lg-6">
+                <div className="col-12 col-lg-6">
                   <div className="form-container">
                     <div className="form-btn">
                       <span

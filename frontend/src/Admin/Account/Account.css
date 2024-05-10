@@ -1,26 +1,34 @@
+/* Common styles */
 .account-page {
   background: #f1f1f1;
-  height: auto;
+  min-height: 100vh;
+  display: flex;
 }
+
 .container {
   max-width: 1300px;
   margin: auto;
   padding-left: 25px;
   padding-right: 25px;
 }
+
 .account-row {
-  height: 88vh;
+  margin-top: -80px;
+  height: auto;
   display: flex;
   align-items: center;
 }
+
 .col-2 {
   width: 100%;
   margin-bottom: 20px;
 }
+
 .col-lg-6 {
   width: 50%;
   float: left;
 }
+
 .form-container {
   background: #fff;
   width: 320px;
@@ -33,6 +41,7 @@
   overflow: hidden;
   border-radius: 40px;
 }
+
 .form-container span {
   font-weight: bold;
   padding: 0 10px;
@@ -62,6 +71,7 @@ form input {
   font-size: 13px;
   letter-spacing: 1px;
 }
+
 form .btn {
   width: 100%;
   background: #f0b22a;
@@ -76,6 +86,7 @@ form .btn {
   font-family: Arial, Helvetica, sans-serif;
   border: none;
 }
+
 form .btn:hover {
   background-color: #173334;
   color: #febd2f;
@@ -96,6 +107,7 @@ form a {
   height: 3px;
   margin-top: 8px;
 }
+
 #logout-btn {
   background-color: #f5f3f3;
   color: #8276c2;
@@ -105,12 +117,15 @@ form a {
   margin: 30px auto;
   padding: 5px;
 }
+
 .forgot {
   padding: 20px 0 10px 0;
 }
+
 #forgot-label {
   font-size: 14px;
 }
+
 .forgot-password button {
   background: none;
   border: none;
@@ -122,17 +137,36 @@ form a {
   letter-spacing: 1px;
   font-family: Arial, Helvetica, sans-serif;
 }
+
 .forgot-password button:hover {
   text-decoration: underline;
 }
+
+/* Media Queries */
+@media only screen and (max-width: 1024px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
 @media only screen and (max-width: 800px) {
-  .col-2 img {
+  .account-row {
+    flex-direction: column;
+  }
+  .account-row img {
     display: none;
   }
   .form-container {
-    width: auto;
+    width: 300px;
   }
   .form-container form {
     padding: 0 30px 0 20px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .col-lg-6 {
+    width: 100%;
   }
 }

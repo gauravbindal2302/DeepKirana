@@ -18,6 +18,7 @@ export default function Contact({ title }) {
     email: "",
     phone: "",
     message: "",
+    timestamp: "",
   });
 
   function handleChange(event) {
@@ -31,17 +32,18 @@ export default function Contact({ title }) {
   function handleSubmit(event) {
     event.preventDefault();
     const { fName, lName, email, phone, message } = form;
-    if (
-      fName === "" ||
-      lName === "" ||
-      email === "" ||
-      phone === "" ||
-      message === ""
-    ) {
+    if (fName === "" || lName === "" || phone === "" || message === "") {
       alert("Please fill all the fields.");
     } else {
       axios.post(`${SERVER_URL}/contact`, form).then((res) => {
         alert(res.data.message);
+        setForm({
+          fName: "",
+          lName: "",
+          email: "",
+          phone: "",
+          message: "",
+        });
       });
     }
   }
