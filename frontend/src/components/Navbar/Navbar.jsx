@@ -112,7 +112,9 @@ export default function Navbar() {
                 />
                 <ul>
                   {searchResults.map((product) => (
-                    <li key={product.id}>{product.productName}</li>
+                    <Link to={"/details/" + product._id}>
+                      <li key={product.id}>{product.productName}</li>
+                    </Link>
                   ))}
                 </ul>
               </div>
