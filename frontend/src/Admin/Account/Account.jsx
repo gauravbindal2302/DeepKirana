@@ -6,6 +6,8 @@ import { Header } from "../Admin";
 import { useNavigate } from "react-router-dom";
 
 export default function Account() {
+  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+
   const navigate = useNavigate();
   const [isLoginVisible, setLoginVisible] = useState(true);
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
@@ -35,7 +37,7 @@ export default function Account() {
     const { email, password, forgotPassword } = admin;
     if (forgotPasswordMode && email && forgotPassword) {
       axios
-        .post("https://localhost:5000/forgot-password", {
+        .post(`${SERVER_URL}/forgot-password`, {
           email,
           newPassword: forgotPassword,
         })
@@ -58,7 +60,7 @@ export default function Account() {
         });
     } else if (!forgotPasswordMode && email && password) {
       axios
-        .post("https://localhost:5000/login", admin)
+        .post(`${SERVER_URL}/login`, admin)
         .then((res) => {
           handleLogin(res.data.token);
         })
@@ -87,7 +89,7 @@ export default function Account() {
       alert("Please fill in all fields!");
     } else {
       axios
-        .post("https://localhost:5000/register", admin)
+        .post(`${SERVER_URL}/register`, admin)
         .then((res) => {
           alert(res.data.message);
           setLoginVisible(true);

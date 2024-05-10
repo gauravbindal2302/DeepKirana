@@ -6,6 +6,8 @@ import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 
 export default function Contact({ title }) {
+  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+
   useEffect(() => {
     document.title = title;
   }, [title]);
@@ -38,7 +40,7 @@ export default function Contact({ title }) {
     ) {
       alert("Please fill all the fields.");
     } else {
-      axios.post("http://localhost:5000/contact", form).then((res) => {
+      axios.post(`${SERVER_URL}/contact`, form).then((res) => {
         alert(res.data.message);
       });
     }

@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 export default function Products({ title }) {
+  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [products, setProducts] = useState([]);
@@ -21,16 +23,15 @@ export default function Products({ title }) {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/categories");
+      const response = await axios.get(`${SERVER_URL}/categories`);
       setCategories(response.data);
-      // Fetch all products with their categories
       const productsWithImageUrl = response.data.reduce(
         (accumulator, category) => [
           ...accumulator,
           ...category.products.map((product) => ({
             ...product,
             category: category.category, // Add category to the product object
-            image: "http://localhost:5000/uploads/" + product.productImage,
+            image: `${SERVER_URL}/uploads/` + product.productImage,
           })),
         ],
         []

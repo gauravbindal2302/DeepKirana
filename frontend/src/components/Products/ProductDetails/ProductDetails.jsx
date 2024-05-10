@@ -6,6 +6,8 @@ import axios from "axios";
 import "./ProductDetails.css";
 
 export default function ProductDetails() {
+  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [categoryName, setCategoryName] = useState("");
@@ -16,9 +18,7 @@ export default function ProductDetails() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const categoriesResponse = await axios.get(
-          "http://localhost:5000/categories"
-        );
+        const categoriesResponse = await axios.get(`${SERVER_URL}/categories`);
         // Fetch all products with their categories
         const productsWithImageUrl = categoriesResponse.data.reduce(
           (accumulator, category) => [
@@ -26,7 +26,7 @@ export default function ProductDetails() {
             ...category.products.map((product) => ({
               ...product,
               category: category.category, // Add category to the product object
-              image: "http://localhost:5000/uploads/" + product.productImage,
+              image: `${SERVER_URL}/uploads/` + product.productImage,
             })),
           ],
           []

@@ -4,6 +4,8 @@ import axios from "axios";
 import "./View.css";
 
 export default function View({ title }) {
+  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
@@ -29,7 +31,7 @@ export default function View({ title }) {
 
   const getCategoryNames = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/categories");
+      const response = await axios.get(`${SERVER_URL}/categories`);
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);

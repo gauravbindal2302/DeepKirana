@@ -4,6 +4,8 @@ import axios from "axios";
 import "./Add.css";
 
 export default function Add({ title }) {
+  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+
   const [categoryImage, setCategoryImage] = useState(null);
   const [categoryName, setCategoryName] = useState("");
   const [categories, setCategories] = useState([]);
@@ -35,7 +37,7 @@ export default function Add({ title }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/admin/dashboard/add",
+        `${SERVER_URL}/admin/dashboard/add`,
         formData,
         {
           headers: {
@@ -58,7 +60,7 @@ export default function Add({ title }) {
 
   const getCategoryNames = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/categories");
+      const response = await axios.get(`${SERVER_URL}/categories`);
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -68,7 +70,6 @@ export default function Add({ title }) {
   const submitProduct = async (event) => {
     event.preventDefault();
 
-    // Check if any of the required fields are empty
     if (
       !selectedCategory ||
       !productImage ||
@@ -79,7 +80,7 @@ export default function Add({ title }) {
       !productDescription
     ) {
       alert("Please fill in all fields");
-      return; // Prevent form submission
+      return;
     }
 
     const formData = new FormData();

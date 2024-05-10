@@ -4,6 +4,8 @@ import axios from "axios";
 import "./Navbar.css";
 
 export default function Navbar() {
+  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+
   const [clicked, setClicked] = useState(false);
   const [color, setColor] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,7 +18,7 @@ export default function Navbar() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/products");
+      const response = await axios.get(`${SERVER_URL}/products`);
       setProducts(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
