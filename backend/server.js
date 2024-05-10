@@ -14,7 +14,7 @@ const server = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-dotenv.config({ path: "./config.env" });
+dotenv.config({ path: "../config.env" });
 
 server.use(express.json());
 server.use(cors());
