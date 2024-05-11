@@ -122,7 +122,7 @@ export default function View({ title }) {
                     {selectedProductDetails.productImage && (
                       <img
                         src={
-                          "http://localhost:5000/uploads/" +
+                          `${SERVER_URL}/uploads/` +
                           selectedProductDetails.productImage
                         }
                         alt={selectedProductDetails.productName}

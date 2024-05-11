@@ -144,4 +144,10 @@ select option:first-child {
   .dashboard-row select {
     font-size: 15px;
   }
+  .size {
+    height: auto;
+  }
+  .checkboxes {
+    flex-direction: column;
+  }
 }

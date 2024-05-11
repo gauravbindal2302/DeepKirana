@@ -49,7 +49,7 @@ export default function Footer() {
             </a>
           </p>
           <Link to="/admin" className="admin-in-footer">
-            <span>Admin</span>
+            {/*<span>Admin</span>*/}
           </Link>
         </div>
       </div>

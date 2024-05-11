@@ -1,6 +1,12 @@
 .received {
   padding: 30px 0;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.received select {
+  padding: 5px 50px;
+  border-radius: 5px;
 }
 
 .received table {

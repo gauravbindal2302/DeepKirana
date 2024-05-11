@@ -23,6 +23,7 @@ server.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const DB = process.env.DATABASE;
 const PORT = process.env.PORT;
 const SECRET_KEY = process.env.KEY;
+const SERVER_URL = process.env.API_URL;
 
 // Connect to the MongoDB database
 mongoose
@@ -167,7 +168,7 @@ const fetchCategories = async (req, res) => {
     res.send(
       categories.map((category) => ({
         ...category._doc,
-        image: `http://localhost:5000/uploads/${category.image}`, // Send the full image URL to the client
+        image: `${SERVER_URL}/uploads/${category.image}`, // Send the full image URL to the client
       }))
     );
   } catch (error) {

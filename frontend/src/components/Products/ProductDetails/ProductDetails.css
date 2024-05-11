@@ -3,9 +3,10 @@
   padding-right: 25px;
 }
 
-#row {
-  height: 72.1vh;
+#product-details-row {
+  min-height: 72.1vh;
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
@@ -117,17 +118,25 @@ h3 {
     margin-top: 30px;
     margin-bottom: -50px;
   }
-  .col-2 {
-    flex-basis: 100%;
+  #col-2 {
+    width: 100%;
   }
-  .row {
+  #product-details-row {
+    height: auto;
     text-align: left;
+    flex-direction: column;
+    padding: 40px;
+    gap: 30px;
   }
+
   #ProductImg {
-    width: 300px;
+    width: 100%;
     height: 300px;
-    display: block;
-    margin: 0 auto;
+    padding-left: 0;
+  }
+  #col-2:nth-child(2) {
+    padding: 0 50px;
+    margin-bottom: 50px;
   }
   p {
     font-size: 0.8rem;

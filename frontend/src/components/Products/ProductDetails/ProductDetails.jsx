@@ -105,7 +105,7 @@ export default function ProductDetails() {
       <Navbar />
       <div className="small-container single-product">
         {product ? (
-          <div id="row">
+          <div id="product-details-row">
             <div id="col-2">
               <img
                 alt={product.productName}

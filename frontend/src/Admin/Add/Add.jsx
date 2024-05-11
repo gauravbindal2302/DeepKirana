@@ -100,7 +100,7 @@ export default function Add({ title }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/admin/dashboard/add-product",
+        `${SERVER_URL}/admin/dashboard/add-product`,
         formData,
         {
           headers: {

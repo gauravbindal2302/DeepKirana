@@ -20,6 +20,7 @@
 
 .row {
   display: flex;
+  flex-direction: row;
 }
 
 .col {
@@ -106,10 +107,16 @@ ul li i {
     height: auto;
   }
   .row {
-    padding: 10% 0;
+    padding: 2% 0;
+    flex-direction: column;
+    border-bottom: 1px solid #dcdada;
   }
-  .col {
+  .bg {
+    display: none;
+  }
+  .home-main .col:nth-child(2) {
     flex-basis: 100%;
+    display: none;
   }
   .category-section {
     width: 90%;

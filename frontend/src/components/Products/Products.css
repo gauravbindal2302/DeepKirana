@@ -117,30 +117,43 @@
     font-size: 1.2rem;
   }
   select {
+    margin: 20px 0;
     font-size: 0.6rem;
   }
   .products-list {
     margin-top: -50px;
     grid-template-columns: repeat(2, 1fr);
   }
+
   .product h4 {
     font-size: 1rem;
     margin-bottom: -4px;
+    width: 100%;
   }
   .product p {
     font-size: 1rem;
   }
+  .product h5 {
+    width: 100%;
+    margin-left: 0;
+    text-align: center;
+  }
   .product h6 {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
+  }
+  .row-2 {
+    margin-top: -10px;
   }
   .BuyNow-Btn {
     margin-top: 5px;
     font-size: 11px;
     padding: 4px 7px;
+    width: 100%;
   }
   .AddToCart-Btn {
     margin-top: 8px;
     font-size: 12px;
     padding: 4px 9px;
+    width: 100%;
   }
 }

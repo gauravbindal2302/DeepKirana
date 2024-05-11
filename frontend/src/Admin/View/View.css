@@ -72,14 +72,7 @@
     padding-top: 20px;
   }
   .dashboard-row-view::after {
-    width: 70%;
-    height: 4px;
-    color: #121212;
-    background: #000;
-    position: absolute; /* Add position absolute */
-    top: 600px; /* Set top to 50% */
-    left: 50%; /* Set left to 50% */
-    transform: translate(-50%, -50%);
+    display: none;
   }
   .dashboard-col-1,
   .dashboard-col-2 {

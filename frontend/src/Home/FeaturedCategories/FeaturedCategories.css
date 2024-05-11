@@ -97,7 +97,7 @@ button {
   animation-play-state: running;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 796px) {
   .categories-container {
     padding: 5% 10%;
   }
@@ -105,8 +105,7 @@ button {
     font-size: 1.4rem;
   }
   .main-title button {
-    width: 30vw;
-    font-size: 0.7rem;
+    display: none;
   }
   .categories-outer {
     margin-top: 20px;

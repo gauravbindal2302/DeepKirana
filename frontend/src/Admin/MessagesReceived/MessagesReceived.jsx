@@ -9,16 +9,21 @@ export default function MessagesReceived() {
   const [messages, setMessages] = useState([]);
   const [expandedMessages, setExpandedMessages] = useState({});
 
-  useEffect(() => {
+  const fetchContacts = () => {
     axios
       .get(`${SERVER_URL}/getContacts`)
       .then((res) => {
         setMessages(res.data);
+        fetchContacts();
       })
       .catch((error) => {
         console.error("Error fetching messages:", error);
       });
-  }, []);
+  };
+
+  useEffect(() => {
+    fetchContacts();
+  });
 
   const toggleMessage = (index) => {
     setExpandedMessages((prevState) => ({
@@ -30,6 +35,10 @@ export default function MessagesReceived() {
   return (
     <>
       <Header1 />
+      {/*<select name="" id="">
+          <option value="Old to New">Newest First</option>
+          <option value="New to Old">Oldest First</option>
+          </select>*/}
       <div className="received">
         <table>
           <thead>
