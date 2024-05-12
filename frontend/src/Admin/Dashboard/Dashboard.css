@@ -1,10 +1,12 @@
-.admin-header {
-  height: auto;
-  padding: 10px 90px;
-  margin: 40px 150px 30px 150px;
+.admin-header,
+.orders-row,
+.messages-received {
+  padding: 10px;
+  margin: 20px;
   border: 1px solid #000;
   border-radius: 10px;
 }
+
 .admin-header h1,
 .orders-row h1,
 .messages-received h1 {
@@ -15,29 +17,20 @@
 
 .operations {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   justify-items: center;
   align-items: center;
   margin-bottom: 15px;
 }
-.orders-row,
-.messages-received {
-  height: auto;
-  padding: 10px 90px;
-  margin: 20px 150px 30px 150px;
-  border: 1px solid #000;
-  border-radius: 10px;
-}
+
 .order-buttons {
   margin: 0 10px 15px 15px;
 }
-.order-buttons button {
-  width: 100%;
-}
 
 .admin-button {
+  width: 100%;
   margin: auto;
-  padding: 8px 100px;
+  padding: 8px 50px;
   background-color: #febd2f;
   color: #173334;
   border: none;
@@ -46,20 +39,37 @@
   transition: background-color 0.1s ease-in-out;
   border: 0.01rem solid #315636;
 }
+
 .admin-button:hover {
   background-color: #173334;
   color: #febd2f;
   border: 0.01rem solid #febd2f;
 }
-@media only screen and (max-width: 800px) {
+
+@media only screen and (min-width: 600px) {
+  .admin-header,
+  .orders-row,
+  .messages-received {
+    margin: 20px;
+  }
+
+  .admin-header,
+  .orders-row {
+    padding: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 15px;
+  }
+}
+
+@media only screen and (min-width: 800px) {
   .admin-header,
   .orders-row {
     padding: 30px;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     grid-gap: 25px;
   }
+
   .admin-button {
-    width: 100%;
-    padding: 6px 30px;
+    padding: 8px 100px;
   }
 }

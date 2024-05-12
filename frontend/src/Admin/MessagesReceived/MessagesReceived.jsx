@@ -21,16 +21,34 @@ export default function MessagesReceived() {
       });
   };
 
-  useEffect(() => {
-    fetchContacts();
-  });
-
   const toggleMessage = (index) => {
     setExpandedMessages((prevState) => ({
       ...prevState,
       [index]: !prevState[index],
     }));
   };
+
+  const handleDeleteAllMessages = async () => {
+    try {
+      await axios.delete(`${SERVER_URL}/deleteAllMessages`);
+      fetchContacts();
+    } catch (error) {
+      console.error("Error deleting all messages:", error);
+    }
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    try {
+      await axios.delete(`${SERVER_URL}/deleteMessage/${messageId}`);
+      fetchContacts();
+    } catch (error) {
+      console.error("Error deleting message:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchContacts();
+  }, []);
 
   return (
     <>
@@ -49,6 +67,14 @@ export default function MessagesReceived() {
               <th>Email</th>
               <th>Phone</th>
               <th>Message</th>
+              <th>
+                <span
+                  onClick={handleDeleteAllMessages}
+                  id="allMessagesDeleteBtn"
+                >
+                  Delete All
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -57,7 +83,9 @@ export default function MessagesReceived() {
                 <td>{index + 1}</td>
                 <td>{message.fName}</td>
                 <td>{message.lName}</td>
-                <td>{message.email}</td>
+                <td>
+                  <a href={`mailto:${message.email}`}>{message.email}</a>
+                </td>
                 <td>{message.phone}</td>
                 <td>
                   {expandedMessages[index] ? (
@@ -76,6 +104,14 @@ export default function MessagesReceived() {
                     </span>
                   )}
                   {expandedMessages[index] && <div>{message.message}</div>}
+                </td>
+                <td>
+                  <button onClick={() => handleDeleteMessage(message._id)}>
+                    <img
+                      src="https://cdn.iconscout.com/icon/free/png-256/free-delete-32-83555.png"
+                      alt=""
+                    />
+                  </button>
                 </td>
               </tr>
             ))}

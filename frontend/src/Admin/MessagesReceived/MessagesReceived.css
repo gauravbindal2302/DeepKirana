@@ -4,6 +4,7 @@
   flex-direction: column;
   align-items: center;
 }
+
 .received select {
   padding: 5px 50px;
   border-radius: 5px;
@@ -11,9 +12,10 @@
 
 .received table {
   margin: 0 auto;
-  width: 80%;
+  width: 90%;
   border-collapse: collapse;
   margin-top: 20px;
+  border: 2px solid #ccc; /* Add border around the table */
 }
 
 .received thead {
@@ -24,15 +26,29 @@
   padding: 10px;
   text-align: left;
   border-bottom: 2px solid #ccc;
+  border-right: 1px solid #ccc; /* Add border to the right of th */
+}
+.received a {
+  color: #000;
+}
+.received a:hover {
+  color: blue;
+  text-decoration: underline;
 }
 
 .received td {
   text-align: left;
   padding: 10px;
   border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc; /* Add border to the right of td */
 }
 
 .received td:last-child {
+  border-right: none; /* Remove right border for the last td in each row */
+}
+
+.received th:nth-child(6),
+.received td:nth-child(6) {
   width: 25%;
 }
 
@@ -46,11 +62,46 @@
   text-decoration: none;
 }
 
-@media only screen and (max-width: 600px) {
+.received img {
+  height: 18px;
+  width: 18px;
+  margin: 0 auto;
+}
+
+.received button {
+  display: flex;
+  background: none;
+  padding: 2px;
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.received th:nth-child(7) {
+  padding: 0 10px;
+  width: 12%;
+}
+
+#allMessagesDeleteBtn {
+  border: 1px solid #ccc;
+  padding: 2px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+#allMessagesDeleteBtn:hover {
+  background: #6d6d6d;
+}
+
+@media only screen and (max-width: 796px) {
   .received thead {
     display: none;
   }
-
+  .received table {
+    border: none;
+  }
   .received tr {
     display: block;
     margin-bottom: 20px;
@@ -64,6 +115,7 @@
     border: none;
     padding: 8px;
     border-bottom: 1px solid #ccc;
+    border-right: none; /* Remove right border for small screens */
   }
 
   .received td:first-child {
@@ -71,7 +123,8 @@
     background-color: #173334;
     color: #f1f1f1;
   }
-  .received td:last-child {
+
+  .received td:nth-child(6) {
     width: 100%;
   }
 }

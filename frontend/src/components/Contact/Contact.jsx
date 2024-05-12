@@ -96,7 +96,8 @@ export default function Contact({ title }) {
         <div className="contact-column-2">
           <form className="contact-form" onSubmit={handleSubmit}>
             <span>
-              First Name:
+              First Name
+              <span style={{ color: "red" }}> *</span>
               <br />
               <input
                 type="name"
@@ -106,8 +107,10 @@ export default function Contact({ title }) {
                 onChange={handleChange}
               />
             </span>
+
             <span>
-              Last Name:
+              Last Name
+              <span style={{ color: "red" }}> *</span>
               <br />
               <input
                 type="name"
@@ -129,7 +132,8 @@ export default function Contact({ title }) {
               />
             </span>
             <span>
-              Phone Number:
+              Phone Number
+              <span style={{ color: "red" }}> *</span>
               <br />
               <input
                 type="name"
@@ -141,7 +145,8 @@ export default function Contact({ title }) {
               />
             </span>
             <span>
-              Description:
+              Message
+              <span style={{ color: "red" }}> *</span>
               <br />
               <textarea
                 placeholder="How can we help you?"

@@ -396,7 +396,6 @@ const contactSchema = new mongoose.Schema({
   email: String,
   phone: String,
   message: String,
-  timestamp: Date,
 });
 const Contact = mongoose.model("Contact", contactSchema);
 
@@ -427,6 +426,29 @@ server.get("/getContacts", async (req, res) => {
     res.send(contacts);
   } catch (error) {
     console.error("Error fetching contacts:", error);
+    res.sendStatus(500);
+  }
+});
+
+// Route handler for deleting all messages
+server.delete("/deleteAllMessages", async (req, res) => {
+  try {
+    await Contact.deleteMany({});
+    res.send({ message: "All messages deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting all messages:", error);
+    res.sendStatus(500);
+  }
+});
+
+// Route handler for deleting a message
+server.delete("/deleteMessage/:id", async (req, res) => {
+  const messageId = req.params.id;
+  try {
+    await Contact.findByIdAndDelete(messageId);
+    res.send({ message: "Message deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting message:", error);
     res.sendStatus(500);
   }
 });
