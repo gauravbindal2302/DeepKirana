@@ -4,7 +4,7 @@ import axios from "axios";
 import "./Add.css";
 
 export default function Add({ title }) {
-  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
 
   const [categoryImage, setCategoryImage] = useState(null);
   const [categoryName, setCategoryName] = useState("");

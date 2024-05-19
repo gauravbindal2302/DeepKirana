@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import "./Account.css";
 import axios from "axios";
 import Dashboard from "../Dashboard/Dashboard";
@@ -6,8 +6,7 @@ import { Header } from "../Admin";
 import { useNavigate } from "react-router-dom";
 
 export default function Account() {
-  const SERVER_URL = "https://deep-kirana-server.vercel.app";
-
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
   const navigate = useNavigate();
   const [isLoginVisible, setLoginVisible] = useState(true);
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
@@ -17,7 +16,7 @@ export default function Account() {
     username: "",
     email: "",
     password: "",
-    forgotPassword: "", // Add forgotPassword field
+    forgotPassword: "",
   });
 
   const handleLogin = (userToken) => {
@@ -78,7 +77,7 @@ export default function Account() {
       username: "",
       email: "",
       password: "",
-      forgotPassword: "", // Reset forgotPassword field
+      forgotPassword: "",
     });
   }
 
@@ -205,6 +204,92 @@ export default function Account() {
                       </form>
                     )}
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </>
+  );
+}
+*/
+
+import React, { useState, useEffect } from "react";
+import {
+  auth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+} from "../firebase/firebase";
+
+import { useNavigate } from "react-router-dom";
+import "./Account.css";
+import Dashboard from "../Dashboard/Dashboard";
+import { Header } from "../Admin";
+
+export default function Account() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+        navigate("/admin/dashboard");
+      } else {
+        setUser(null);
+      }
+    });
+
+    return unsubscribe;
+  }, [navigate]);
+
+  const handleSignInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, new GoogleAuthProvider());
+      setUser(result.user);
+      navigate("/admin/dashboard");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <>
+      {user ? (
+        <Dashboard />
+      ) : (
+        <>
+          <Header />
+          <div className="account-page">
+            <div className="container">
+              <div className="row account-row">
+                <div className="col-12 col-lg-6">
+                  <img alt="" src="Images/image-1.png" width="100%" />
+                </div>
+                <div className="col-12 col-lg-6">
+                  <button
+                    className="google-signup-button"
+                    onClick={handleSignInWithGoogle}
+                    style={{ display: "flex", alignItems: "center" }}
+                  >
+                    <img
+                      src="google.jpg"
+                      alt="Google Logo"
+                      className="signup-button-image"
+                    />
+                    Sign up with Google
+                  </button>
                 </div>
               </div>
             </div>

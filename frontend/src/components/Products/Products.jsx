@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 export default function Products({ title }) {
-  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
 
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");

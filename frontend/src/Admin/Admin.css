@@ -21,6 +21,15 @@
   font-weight: bold;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+.header-1 .logout {
+  color: #f6f6f6;
+  position: absolute;
+  top: 37px;
+  right: 60px;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
 .go-to-dashboard {
   color: #4b8653;
   position: absolute;

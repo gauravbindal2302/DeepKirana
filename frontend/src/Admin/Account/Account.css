@@ -142,6 +142,32 @@ form a {
   text-decoration: underline;
 }
 
+.google-signup-button {
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  margin: 0 auto;
+}
+
+.google-signup-button {
+  color: #fff;
+  background-color: #2e476f;
+}
+
+.google-signup-button:hover {
+  background-color: #365382;
+  transform: scale(1.04);
+}
+
+.google-signup-button img.signup-button-image {
+  width: 30px;
+  border-radius: 5px;
+  margin-right: 15px;
+}
+
 /* Media Queries */
 @media only screen and (max-width: 1024px) {
   .container {

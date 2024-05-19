@@ -4,7 +4,7 @@ import axios from "axios";
 import "./Navbar.css";
 
 export default function Navbar() {
-  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
 
   const [clicked, setClicked] = useState(false);
   const [color, setColor] = useState(false);

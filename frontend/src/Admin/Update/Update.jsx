@@ -3,7 +3,7 @@ import { Header1, CRUD } from "../Admin";
 import axios from "axios";
 
 export default function Update({ title }) {
-  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
 
   const [categories, setCategories] = useState([]);
   const [selectedCategory1, setSelectedCategory1] = useState("");

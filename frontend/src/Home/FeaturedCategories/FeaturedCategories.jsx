@@ -4,7 +4,7 @@ import "./FeaturedCategories.css";
 import axios from "axios";
 
 export default function FeaturedCategories() {
-  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
 
   const [categories, setCategories] = useState([]);
 

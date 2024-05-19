@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import "./MessagesReceived.css";
 
 export default function MessagesReceived() {
-  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
 
   const [messages, setMessages] = useState([]);
   const [expandedMessages, setExpandedMessages] = useState({});

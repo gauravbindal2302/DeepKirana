@@ -6,7 +6,7 @@ import axios from "axios";
 import "./FeaturedProducts.css";
 
 export default function FeaturedProducts() {
-  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
 
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);

@@ -6,7 +6,7 @@ import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 
 export default function Contact({ title }) {
-  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
 
   useEffect(() => {
     document.title = title;
@@ -73,7 +73,7 @@ export default function Contact({ title }) {
               <div className="call-email">
                 <span className="call">
                   <h2>Call Us</h2>
-                  <p>1245987876</p>
+                  <p>9897034244</p>
                 </span>
                 <span className="email">
                   <h2>Email</h2>
@@ -83,11 +83,7 @@ export default function Contact({ title }) {
               <div className="address">
                 <span>
                   <h2>Address</h2>
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. A
-                    cupiditate id accusamus distinctio vel unde hic? Quo eos
-                    modi
-                  </p>
+                  <p>Shop No. 21, Kabari Bazar, Meerut City, 250002</p>
                 </span>
               </div>
             </div>

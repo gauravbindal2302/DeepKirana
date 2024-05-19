@@ -6,7 +6,7 @@ import axios from "axios";
 import "./ProductDetails.css";
 
 export default function ProductDetails() {
-  const SERVER_URL = "https://deep-kirana-server.vercel.app";
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
 
   const { id } = useParams();
   const [product, setProduct] = useState(null);
