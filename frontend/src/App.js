@@ -127,6 +127,7 @@ function PrivateRoute({ user, children }) {
 }
 
 export default function App() {
+  const whatsapp_number = process.env.REACT_APP_WHATSAPP_NUMBER;
   const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState(null);
 
@@ -234,7 +235,9 @@ export default function App() {
       {isScrolled && (
         <button
           className="whatsapp-link"
-          onClick={() => (window.location.href = "https://wa.me/9897034244")}
+          onClick={() =>
+            (window.location.href = `https://wa.me/${whatsapp_number}`)
+          }
         >
           <i className="fab fa-whatsapp"></i>
         </button>

@@ -49,6 +49,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+/*
 //Admin schema and model
 const adminSchema = new mongoose.Schema({
   username: { type: String },
@@ -124,6 +125,7 @@ server.post("/forgot-password", async (req, res) => {
     res.status(500).json({ error: "Failed to reset password!" });
   }
 });
+*/
 
 //Category schema and model
 const categorySchema = new mongoose.Schema({
