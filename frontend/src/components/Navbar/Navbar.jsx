@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./Navbar.css";
 
-export default function Navbar() {
+export default function Navbar(props) {
   const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
 
   const [clicked, setClicked] = useState(false);
@@ -14,7 +14,7 @@ export default function Navbar() {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  });
 
   const fetchProducts = async () => {
     try {
@@ -93,7 +93,8 @@ export default function Navbar() {
               </ul>
             </nav>
             <Link to="/cart">
-              <i id="bag-icon" className="fas fa-regular fa-bag-shopping" />
+              {/*<i id="bag-icon" className="fas fa-regular fa-bag-shopping" />*/}
+              <span id="noOfItems">Cart[{props.noOfItems}]</span>
             </Link>
             <div className="menu-icon" onClick={handleClick}>
               <i

@@ -61,7 +61,6 @@ export default function Cart({ title }) {
   const handleInputChange = (event, itemId) => {
     let newItems = items.map((item) => {
       if (item.id === itemId) {
-        // Ensure that quantity is always at least 1
         const quantity = parseInt(event.target.value);
         return { ...item, quantity: Math.max(1, quantity) };
       } else {
@@ -124,14 +123,15 @@ export default function Cart({ title }) {
 
   return (
     <>
-      <Navbar />
+      <Navbar noOfItems={items.length} />
       <div className="small-container cart-page" id="cart">
         <table>
           <thead>
             <tr>
               <th style={{ paddingLeft: "20px", borderRadius: "8px 0 0 8px" }}>
-                Cart Items
+                S. No.
               </th>
+              <th>Cart Items</th>
               <th>Quantity</th>
               <th style={{ paddingRight: "20px", borderRadius: "0 8px 8px 0" }}>
                 SubTotal
@@ -139,8 +139,9 @@ export default function Cart({ title }) {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {items.map((item, index) => (
               <tr key={item.id}>
+                <td>{index + 1}</td>
                 <td>
                   <div className="cart-info">
                     <img alt="" src={`Images/buy-${item.id}.jpg`} />

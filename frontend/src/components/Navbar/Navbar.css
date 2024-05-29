@@ -130,7 +130,9 @@ ul li a:hover {
   display: none;
   color: #d4caca;
 }
-
+#noOfItems {
+  color: #d4caca;
+}
 #bag-icon {
   color: #d4caca;
   font-size: 1.4rem;

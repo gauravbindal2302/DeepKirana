@@ -1,5 +1,6 @@
 .products {
   display: flex;
+  min-height: 100vh;
 }
 .list {
   width: 18vw;
@@ -58,9 +59,15 @@
   letter-spacing: 1px;
   border: 1px solid #133334;
   font-size: small;
+  display: flex;
 }
-
+#no-products-found {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #797979;
+}
 .products-list {
+  min-height: 100vh;
   margin-top: -20px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
