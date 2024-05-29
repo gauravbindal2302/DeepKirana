@@ -150,7 +150,7 @@ server.post(
   upload.single("image"),
   async (req, res) => {
     const { category } = req.body;
-    const image = req.file.filename; // Get the filename of the uploaded image
+    const image = req.file ? req.file.filename : null;
 
     try {
       const newCategory = new Category({ category, image, products: [] });
@@ -240,7 +240,7 @@ server.post(
       category,
     } = req.body;
 
-    const productImage = req.file.filename; // Get the filename of the uploaded image
+    const productImage = req.file ? req.file.filename : null;
 
     try {
       const newProduct = new Product({
