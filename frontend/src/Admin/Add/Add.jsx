@@ -72,12 +72,10 @@ export default function Add({ title }) {
 
     if (
       !selectedCategory ||
-      !productImage ||
       !productName ||
       !productPrice ||
       !productMrp ||
-      !productSize ||
-      !productDescription
+      !productSize
     ) {
       alert("Please fill in all fields");
       return;
