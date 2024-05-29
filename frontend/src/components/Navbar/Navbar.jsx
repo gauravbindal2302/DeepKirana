@@ -14,12 +14,23 @@ export default function Navbar(props) {
 
   useEffect(() => {
     fetchProducts();
-  });
+  }, []); // Only run on mount
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${SERVER_URL}/products`);
-      setProducts(response.data);
+      const response = await axios.get(`${SERVER_URL}/categories`);
+      const productsWithCategory = response.data.reduce(
+        (accumulator, category) => [
+          ...accumulator,
+          ...category.products.map((product) => ({
+            _id: product._id,
+            productName: product.productName,
+            category: category.category,
+          })),
+        ],
+        []
+      );
+      setProducts(productsWithCategory);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -44,6 +55,10 @@ export default function Navbar(props) {
     setColor(!clicked);
   }
 
+  function handleSearchSubmit(event) {
+    event.preventDefault();
+  }
+
   return (
     <>
       <div className={color ? "header active" : "header"}>
@@ -55,7 +70,12 @@ export default function Navbar(props) {
               </Link>
             </div>
             <div className="search-bar">
-              <form action="" method="get" className="search-bar-form">
+              <form
+                action=""
+                method="get"
+                className="search-bar-form"
+                onSubmit={handleSearchSubmit}
+              >
                 <div className="search">
                   <input
                     type="text"
@@ -93,7 +113,6 @@ export default function Navbar(props) {
               </ul>
             </nav>
             <Link to="/cart">
-              {/*<i id="bag-icon" className="fas fa-regular fa-bag-shopping" />*/}
               <span id="noOfItems">Cart[{props.noOfItems}]</span>
             </Link>
             <div className="menu-icon" onClick={handleClick}>
@@ -103,7 +122,12 @@ export default function Navbar(props) {
             </div>
           </div>
           <div className="search-bar-full">
-            <form action="" method="get" className="search-bar-form">
+            <form
+              action=""
+              method="get"
+              className="search-bar-form"
+              onSubmit={handleSearchSubmit}
+            >
               <div className="search">
                 <input
                   type="text"

@@ -27,13 +27,14 @@
   background-color: #fff;
   position: absolute;
   z-index: 1;
+  color: #000;
 }
 
 .search ul li {
   padding: 5px 8px;
   font-size: 0.9rem;
   cursor: pointer;
-  color: #0f0e0e;
+  color: #000;
 }
 .search ul li:last-child {
   border-radius: 0 0 5px 5px;
@@ -106,12 +107,12 @@ nav ul li {
   display: inline-block;
   margin-right: 30px;
   text-decoration: none;
-  color: #d4caca;
+  color: #e8dddd;
   font-weight: 500;
 }
 
 ul li a {
-  color: #d4caca;
+  color: #bdb4b4;
   text-decoration: none;
 }
 
