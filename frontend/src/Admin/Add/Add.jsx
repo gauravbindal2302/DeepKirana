@@ -26,7 +26,7 @@ export default function Add({ title }) {
     event.preventDefault();
 
     // Check if the category name and image are empty
-    if (!categoryName || !event.target.image.files[0]) {
+    if (!categoryName) {
       alert("Please fill in all fields");
       return; // Prevent form submission
     }
