@@ -1,0 +1,6 @@
+![image](https://github.com/gauravbindal2302/DeepStore/assets/89655308/b6046298-6710-4718-93a0-4ff47ef7abe6)
+![image](https://github.com/gauravbindal2302/DeepStore/assets/89655308/d5af8076-ffcb-45d6-a5dd-b0cf853c68f5)
+![image](https://github.com/gauravbindal2302/DeepStore/assets/89655308/28577a1d-f913-4837-8379-e8d5db7905b6)
+![image](https://github.com/gauravbindal2302/DeepStore/assets/89655308/a8c4fdbf-62bb-4111-9293-deaf41e4d1a1)
+![image](https://github.com/gauravbindal2302/DeepStore/assets/89655308/93a972a1-a775-4189-ac3c-5402782262f2)
+![image](https://github.com/gauravbindal2302/DeepStore/assets/89655308/5e8cdbff-5c0d-4d82-bc24-add24a3620b1)
