@@ -14,7 +14,7 @@ export default function Navbar(props) {
 
   useEffect(() => {
     fetchProducts();
-  }, []); // Only run on mount
+  }, []);
 
   const fetchProducts = async () => {
     try {

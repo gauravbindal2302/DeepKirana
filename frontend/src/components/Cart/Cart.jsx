@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Cart.css";
+import "./CartItems.json";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 
@@ -388,7 +389,7 @@ export default function Cart({ title }) {
                   </div>
                 )}
                 <label id="COD-Note">
-                  [Note: Free COD only available under 10 Kilometres]
+                  [Note: Free delivery on minimum order of ₹499]
                 </label>
               </div>
             </form>

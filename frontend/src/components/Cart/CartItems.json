@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Red Printed T-Shirt",
+    "price": 50.0,
+    "quantity": 1
+  },
+  {
+    "id": 2,
+    "name": "Blue Printed T-Shirt",
+    "price": 75.0,
+    "quantity": 1
+  },
+  {
+    "id": 3,
+    "name": "Red Printed T-Shirt",
+    "price": 50.0,
+    "quantity": 1
+  },
+  {
+    "id": 4,
+    "name": "Red Printed T-Shirt",
+    "price": 50.0,
+    "quantity": 1
+  },
+  {
+    "id": 5,
+    "name": "Blue Printed T-Shirt",
+    "price": 75.0,
+    "quantity": 1
+  },
+  {
+    "id": 6,
+    "name": "Red Printed T-Shirt",
+    "price": 50.0,
+    "quantity": 1
+  }
+]

@@ -25,10 +25,9 @@ export default function Update({ title }) {
   }, [title]);
 
   useEffect(() => {
-    const selectedCategoryValue = selectedCategory1;
-    if (selectedCategoryValue) {
+    if (selectedCategory1) {
       const category = categories.find(
-        (category) => category.category === selectedCategoryValue
+        (category) => category.category === selectedCategory1
       );
       setCategoryProducts(category ? category.products : []);
       setSelectedProduct("");
@@ -39,10 +38,9 @@ export default function Update({ title }) {
   }, [selectedCategory1, categories]);
 
   useEffect(() => {
-    const selectedCategoryValue = selectedCategory2;
-    if (selectedCategoryValue) {
+    if (selectedCategory2) {
       const category = categories.find(
-        (category) => category.category === selectedCategoryValue
+        (category) => category.category === selectedCategory2
       );
       setCategoryProducts(category ? category.products : []);
       setSelectedProduct("");
@@ -103,30 +101,30 @@ export default function Update({ title }) {
       return;
     }
 
-    let updatedProductSize = productSize; // Initialize with the current productSize
+    let updatedProductSize = productSize;
 
-    // If Customizable checkbox is not selected, set productSize to "Non-Customizable"
     if (productSize !== "Customizable") {
       updatedProductSize = "Non-Customizable";
     }
 
     try {
       const formData = new FormData();
-      formData.append("category", selectedCategory2);
-      formData.append("product", selectedProduct);
       formData.append("productName", updatedProductName);
       formData.append("productPrice", updatedProductPrice);
       formData.append("productMrp", updatedProductMrp);
-      formData.append("productSize", updatedProductSize); // Use the updated productSize
+      formData.append("productSize", updatedProductSize);
       formData.append("productDescription", productDescription);
 
-      // Add this part to handle the product image
       if (updatedProductImage) {
         formData.append("productImage", updatedProductImage);
       }
 
+      const productId = categoryProducts.find(
+        (product) => product.productName === selectedProduct
+      )._id;
+
       await axios.put(
-        `${SERVER_URL}/admin/dashboard/update/product/${selectedCategory2}/${selectedProduct}`,
+        `${SERVER_URL}/admin/dashboard/update/product/${selectedCategory2}/${productId}`,
         formData,
         {
           headers: {
@@ -136,15 +134,15 @@ export default function Update({ title }) {
       );
 
       alert(`Product (${selectedProduct}) updated successfully!`);
-      // Clear or update state as needed
       setUpdatedProductName("");
       setUpdatedProductPrice("");
       setUpdatedProductMrp("");
-      setProductSize(updatedProductSize); // Update the productSize in the state
+      setProductSize(updatedProductSize);
       setProductDescription("");
-      setUpdatedProductImage(""); // Clear the product image state as well
+      setUpdatedProductImage(null);
     } catch (error) {
       console.error("Error updating product:", error);
+      alert("There was an error updating the product.");
     }
   };
 
@@ -293,11 +291,7 @@ export default function Update({ title }) {
               value={productDescription}
               onChange={(event) => setProductDescription(event.target.value)}
             />
-            <button
-              type="submit"
-              className="admin-btn"
-              onClick={handleUpdateProduct}
-            >
+            <button type="submit" className="admin-btn">
               Update Product
             </button>
           </form>

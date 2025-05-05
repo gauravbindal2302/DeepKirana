@@ -189,7 +189,7 @@ server.put(
   async (req, res) => {
     const { category } = req.params;
     const { categoryName } = req.body;
-    const categoryImage = req.file.filename;
+    const categoryImage = req.file ? req.file.filename : null;
     try {
       await Category.findOneAndUpdate(
         { category },
@@ -243,23 +243,21 @@ server.post(
     const productImage = req.file ? req.file.filename : null;
 
     try {
-      const newProduct = new Product({
-        productName,
-        productPrice,
-        productMrp,
-        productSize,
-        productDescription,
-        category,
-        productImage, // Save the filename in the 'productImage' field of the Product model
-      });
-      await newProduct.save();
-
-      // Update the products array in the corresponding category
       await Category.findOneAndUpdate(
         { category },
-        { $push: { products: newProduct } }
+        {
+          $push: {
+            products: {
+              productName,
+              productPrice,
+              productMrp,
+              productSize,
+              productDescription,
+              productImage,
+            },
+          },
+        }
       );
-
       res.sendStatus(200);
     } catch (error) {
       console.error("Error adding product:", error);
@@ -269,9 +267,10 @@ server.post(
 );
 
 server.put(
-  "/admin/dashboard/update/product/:category/:product",
+  "/admin/dashboard/update/product/:category/:productId",
+  upload.single("image"),
   async (req, res) => {
-    const { category, product } = req.params;
+    const { category, productId } = req.params;
     const {
       productName,
       productPrice,
@@ -279,6 +278,8 @@ server.put(
       productSize,
       productDescription,
     } = req.body;
+
+    const productImage = req.file ? req.file.filename : null;
 
     try {
       // Find the category by name
@@ -288,10 +289,8 @@ server.put(
         return res.status(404).json({ error: "Category not found" });
       }
 
-      // Find the product within the category
-      const existingProduct = existingCategory.products.find(
-        (p) => p.productName === product
-      );
+      // Find the product within the category using productId
+      const existingProduct = existingCategory.products.id(productId);
 
       if (!existingProduct) {
         return res
@@ -300,21 +299,13 @@ server.put(
       }
 
       // Update product details
-      if (productName) {
-        existingProduct.productName = productName;
-      }
-      if (productPrice) {
-        existingProduct.productPrice = productPrice;
-      }
-      if (productMrp) {
-        existingProduct.productMrp = productMrp;
-      }
-      if (productSize) {
-        existingProduct.productSize = productSize;
-      }
-      if (productDescription) {
+      if (productName) existingProduct.productName = productName;
+      if (productPrice) existingProduct.productPrice = productPrice;
+      if (productMrp) existingProduct.productMrp = productMrp;
+      if (productSize) existingProduct.productSize = productSize;
+      if (productDescription)
         existingProduct.productDescription = productDescription;
-      }
+      if (productImage) existingProduct.productImage = productImage;
 
       // Save the updated category document
       await existingCategory.save();
