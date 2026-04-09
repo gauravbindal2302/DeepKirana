@@ -215,87 +215,50 @@ export default function Account() {
 }
 */
 
-import React, { useState, useEffect } from "react";
-import {
-  auth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-} from "../firebase/firebase";
-
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Account.css";
-import Dashboard from "../Dashboard/Dashboard";
 import { Header } from "../Admin";
 
 export default function Account() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-        navigate("/admin/dashboard");
-      } else {
-        setUser(null);
-      }
-    });
-
-    return unsubscribe;
+    // Firebase auth is disabled temporarily.
+    // Keep user on admin landing page until manual navigation.
   }, [navigate]);
 
-  const handleSignInWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, new GoogleAuthProvider());
-      setUser(result.user);
-      navigate("/admin/dashboard");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      setUser(null);
-    } catch (error) {
-      console.error(error);
-    }
+  const handleContinueToAdmin = () => {
+    navigate("/admin/dashboard");
   };
 
   return (
     <>
-      {user ? (
-        <Dashboard />
-      ) : (
-        <>
-          <Header />
-          <div className="account-page">
-            <div className="container">
-              <div className="row account-row">
-                <div className="col-12 col-lg-6">
-                  <img alt="" src="Images/image-1.png" width="100%" />
-                </div>
-                <div className="col-12 col-lg-6">
-                  <button
-                    className="google-signup-button"
-                    onClick={handleSignInWithGoogle}
-                    style={{ display: "flex", alignItems: "center" }}
-                  >
-                    <img
-                      src="google.jpg"
-                      alt="Google Logo"
-                      className="signup-button-image"
-                    />
-                    Sign up with Google
-                  </button>
-                </div>
+      <Header />
+      <div className="account-page">
+        <div className="container">
+          <div className="row account-row">
+            <div className="col-12 col-lg-6">
+              <img alt="" src="Images/image-1.png" width="100%" />
+            </div>
+            <div className="col-12 col-lg-6">
+              <div className="form-container" style={{ textAlign: "center" }}>
+                <h3 style={{ marginBottom: "14px" }}>Admin Access</h3>
+                <p style={{ marginBottom: "20px" }}>
+                  Firebase login is temporarily disabled.
+                </p>
+                <button
+                  className="google-signup-button"
+                  onClick={handleContinueToAdmin}
+                  style={{ display: "inline-flex", alignItems: "center" }}
+                >
+                  Continue to Dashboard
+                </button>
               </div>
             </div>
           </div>
-        </>
-      )}
+        </div>
+      </div>
     </>
   );
 }

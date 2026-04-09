@@ -110,12 +110,13 @@ export default function App() {
 
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./Home/Home";
 import Products from "./components/Products/Products";
 import About from "./components/About/About";
 import Contact from "./components/Contact/Contact";
 import Cart from "./components/Cart/Cart";
+import OrderConfirmation from "./components/OrderConfirmation/OrderConfirmation";
 import ProductDetails from "./components/Products/ProductDetails/ProductDetails";
 import { Admin } from "./Admin/Admin";
 import Dashboard from "./Admin/Dashboard/Dashboard";
@@ -125,28 +126,10 @@ import Update from "./Admin/Update/Update";
 import Delete from "./Admin/Delete/Delete";
 import OrderedOrders from "./Admin/OrdersReceived/OrdersReceived";
 import MessagesReceived from "./Admin/MessagesReceived/MessagesReceived";
-import { auth } from "./Admin/firebase/firebase";
-
-function PrivateRoute({ user, children }) {
-  return user ? children : <Navigate to="/admin" />;
-}
 
 export default function App() {
   const whatsapp_number = process.env.REACT_APP_WHATSAPP_NUMBER;
   const [isScrolled, setIsScrolled] = useState(false);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return unsubscribe;
-  }, []);
 
   useEffect(() => {
     function handleScroll() {
@@ -179,62 +162,38 @@ export default function App() {
           element={<Contact title="Deep Store - Contact" />}
         />
         <Route path="/cart" element={<Cart title="Deep Store - Cart" />} />
+        <Route
+          path="/order-confirmation/:orderId"
+          element={<OrderConfirmation title="Deep Store - Order Confirmation" />}
+        />
         <Route path="/admin" element={<Admin title="Deep Store - Admin" />} />
         <Route
           path="/admin/dashboard"
-          element={
-            <PrivateRoute user={user}>
-              <Dashboard title="Deep Store - Admin | Dashboard" />
-            </PrivateRoute>
-          }
+          element={<Dashboard title="Deep Store - Admin | Dashboard" />}
         />
         <Route
           path="/admin/dashboard/add"
-          element={
-            <PrivateRoute user={user}>
-              <Add title="Deep Store - Admin | Add" />
-            </PrivateRoute>
-          }
+          element={<Add title="Deep Store - Admin | Add" />}
         />
         <Route
           path="/admin/dashboard/view"
-          element={
-            <PrivateRoute user={user}>
-              <View title="Deep Store - Admin | View" />
-            </PrivateRoute>
-          }
+          element={<View title="Deep Store - Admin | View" />}
         />
         <Route
           path="/admin/dashboard/update"
-          element={
-            <PrivateRoute user={user}>
-              <Update title="Deep Store - Admin | Update" />
-            </PrivateRoute>
-          }
+          element={<Update title="Deep Store - Admin | Update" />}
         />
         <Route
           path="/admin/dashboard/delete"
-          element={
-            <PrivateRoute user={user}>
-              <Delete title="Deep Store - Admin | Delete" />
-            </PrivateRoute>
-          }
+          element={<Delete title="Deep Store - Admin | Delete" />}
         />
         <Route
           path="/admin/dashboard/ordersReceived"
-          element={
-            <PrivateRoute user={user}>
-              <OrderedOrders title="Deep Store - Admin | Orders" />
-            </PrivateRoute>
-          }
+          element={<OrderedOrders title="Deep Store - Admin | Orders" />}
         />
         <Route
           path="/admin/dashboard/messagesReceived"
-          element={
-            <PrivateRoute user={user}>
-              <MessagesReceived title="Deep Store - Admin | Messages" />
-            </PrivateRoute>
-          }
+          element={<MessagesReceived title="Deep Store - Admin | Messages" />}
         />
       </Routes>
       {isScrolled && (
