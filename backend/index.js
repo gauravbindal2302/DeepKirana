@@ -24,6 +24,7 @@ const DB = process.env.DATABASE;
 const PORT = process.env.PORT;
 const SECRET_KEY = process.env.KEY;
 const SERVER_URL = process.env.API_URL;
+const STORE_PINCODE = String(process.env.STORE_PINCODE || "").replace(/\D/g, "");
 const STORE_LATITUDE = Number(process.env.STORE_LATITUDE || "28.6139");
 const STORE_LONGITUDE = Number(process.env.STORE_LONGITUDE || "77.209");
 const FREE_DELIVERY_RADIUS_KM = Number(process.env.FREE_DELIVERY_RADIUS_KM || "5");
@@ -65,6 +66,70 @@ const calculateDistanceInKm = (lat1, lon1, lat2, lon2) => {
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return earthRadiusKm * c;
+};
+
+const fetchCoordinatesForIndianPincode = async (pinCode) => {
+  const urls = [
+    `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1&countrycodes=in&postalcode=${pinCode}`,
+    `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1&countrycodes=in&q=${pinCode}`,
+    `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1&q=${pinCode}%2C%20India`,
+  ];
+
+  for (const geoUrl of urls) {
+    const response = await fetch(geoUrl, {
+      headers: {
+        "User-Agent": "deepstore-delivery-check/1.0",
+      },
+    });
+
+    if (!response.ok) {
+      continue;
+    }
+
+    const locations = await response.json();
+    if (!Array.isArray(locations) || locations.length === 0) {
+      continue;
+    }
+
+    const location = locations[0];
+    const targetLatitude = Number(location.lat);
+    const targetLongitude = Number(location.lon);
+
+    if (!Number.isFinite(targetLatitude) || !Number.isFinite(targetLongitude)) {
+      continue;
+    }
+
+    return {
+      latitude: targetLatitude,
+      longitude: targetLongitude,
+      sourceDisplayName: location.display_name || "",
+    };
+  }
+
+  return null;
+};
+
+const getStoreCoordinates = async () => {
+  if (/^\d{6}$/.test(STORE_PINCODE)) {
+    const storeCoordinates = await fetchCoordinatesForIndianPincode(STORE_PINCODE);
+    if (storeCoordinates) {
+      return {
+        ...storeCoordinates,
+        pinCode: STORE_PINCODE,
+      };
+    }
+  }
+
+  if (Number.isFinite(STORE_LATITUDE) && Number.isFinite(STORE_LONGITUDE)) {
+    return {
+      latitude: STORE_LATITUDE,
+      longitude: STORE_LONGITUDE,
+      pinCode: null,
+      sourceDisplayName: "",
+    };
+  }
+
+  return null;
 };
 
 /*
@@ -410,36 +475,24 @@ server.get("/delivery/check", async (req, res) => {
       return res.status(400).json({ error: "Please provide a valid 6-digit pincode." });
     }
 
-    const query = encodeURIComponent(`${pinCode}, India`);
-    const geoUrl = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${query}`;
-    const response = await fetch(geoUrl, {
-      headers: {
-        "User-Agent": "deepstore-delivery-check/1.0",
-      },
-    });
-
-    if (!response.ok) {
-      return res.status(502).json({ error: "Unable to validate pincode right now." });
-    }
-
-    const locations = await response.json();
-    if (!Array.isArray(locations) || locations.length === 0) {
+    const coordinates = await fetchCoordinatesForIndianPincode(pinCode);
+    if (!coordinates) {
       return res.status(404).json({ error: "Pincode location not found." });
     }
 
-    const location = locations[0];
-    const targetLatitude = Number(location.lat);
-    const targetLongitude = Number(location.lon);
-
-    if (!Number.isFinite(targetLatitude) || !Number.isFinite(targetLongitude)) {
-      return res.status(500).json({ error: "Failed to process pincode location." });
+    const storeCoordinates = await getStoreCoordinates();
+    if (!storeCoordinates) {
+      return res.status(500).json({
+        error:
+          "Store location is not configured. Please set STORE_PINCODE (preferred) or valid STORE_LATITUDE and STORE_LONGITUDE.",
+      });
     }
 
     const distanceKm = calculateDistanceInKm(
-      STORE_LATITUDE,
-      STORE_LONGITUDE,
-      targetLatitude,
-      targetLongitude
+      storeCoordinates.latitude,
+      storeCoordinates.longitude,
+      coordinates.latitude,
+      coordinates.longitude
     );
 
     const roundedDistanceKm = Number(distanceKm.toFixed(2));
@@ -450,10 +503,16 @@ server.get("/delivery/check", async (req, res) => {
       distanceKm: roundedDistanceKm,
       freeDeliveryRadiusKm: FREE_DELIVERY_RADIUS_KM,
       withinFreeRange,
+      storePinCode: storeCoordinates.pinCode,
       storeCoordinates: {
-        latitude: STORE_LATITUDE,
-        longitude: STORE_LONGITUDE,
+        latitude: storeCoordinates.latitude,
+        longitude: storeCoordinates.longitude,
       },
+      destinationCoordinates: {
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+      },
+      matchedAddress: coordinates.sourceDisplayName,
     });
   } catch (error) {
     console.error("Error checking delivery range:", error);
