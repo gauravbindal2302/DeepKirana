@@ -149,6 +149,35 @@ td:last-child {
 .form-group {
   margin-bottom: 5px;
 }
+.delivery-check-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #173334;
+  background: #eef7f7;
+  color: #173334;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+.delivery-check-btn:hover {
+  background: #173334;
+  color: #fff;
+}
+.delivery-check-msg {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.delivery-check-msg.success {
+  color: #0e7d34;
+}
+.delivery-check-msg.warning {
+  color: #9c5a00;
+}
+.delivery-check-msg.error {
+  color: #c12424;
+}
 .form-group-payment {
   display: flex;
   width: 100%;

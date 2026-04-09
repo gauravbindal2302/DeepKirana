@@ -2,7 +2,12 @@
 
 .categories-container {
   background-color: #d8f3f3;
-  padding: 3% 10% 5% 10%;
+  padding: 3% 10% 8% 10%;
+  overflow-x: hidden;
+  overflow-y: visible;
+  position: relative;
+  z-index: 0;
+  margin-bottom: 20px;
 }
 .main-title {
   display: flex;
@@ -37,7 +42,8 @@ button {
   background-color: #173334;
 }
 .categories-outer {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
   width: 100%;
   margin-top: 20px;
 }

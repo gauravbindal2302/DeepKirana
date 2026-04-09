@@ -121,9 +121,39 @@ export default function Cart({ title }) {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [showPaymentNote, setShowPaymentNote] = useState(false); // To show/hide the payment note
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [isCheckingDelivery, setIsCheckingDelivery] = useState(false);
+  const [deliveryCheckResult, setDeliveryCheckResult] = useState(null);
+  const [deliveryCheckError, setDeliveryCheckError] = useState("");
 
-  const deliveryCharge = totalPrice >= 499 ? 0 : 60;
+  const isFreeByOrderValue = totalPrice >= 499;
+  const isFreeByRange = Boolean(deliveryCheckResult?.withinFreeRange);
+  const deliveryCharge = isFreeByOrderValue || isFreeByRange ? 0 : 60;
   const totalAmount = totalPrice + deliveryCharge;
+
+  const handleCheckDelivery = async () => {
+    const sanitizedPincode = String(pinCode || "").replace(/\D/g, "");
+    if (!/^\d{6}$/.test(sanitizedPincode)) {
+      setDeliveryCheckResult(null);
+      setDeliveryCheckError("Please enter a valid 6-digit pincode.");
+      return;
+    }
+
+    try {
+      setIsCheckingDelivery(true);
+      setDeliveryCheckError("");
+      const response = await axios.get(`${SERVER_URL}/delivery/check`, {
+        params: { pinCode: sanitizedPincode },
+      });
+      setDeliveryCheckResult(response.data);
+    } catch (error) {
+      setDeliveryCheckResult(null);
+      setDeliveryCheckError(
+        error?.response?.data?.error || "Unable to check delivery range right now."
+      );
+    } finally {
+      setIsCheckingDelivery(false);
+    }
+  };
 
   // Function to handle form submission
   const handleSubmit = (e) => {
@@ -139,6 +169,12 @@ export default function Cart({ title }) {
       return;
     }
 
+    const normalizedPinCode = String(pinCode || "").replace(/\D/g, "");
+    if (!deliveryCheckResult || deliveryCheckResult.pinCode !== normalizedPinCode) {
+      alert("Please verify delivery availability by pincode before placing order.");
+      return;
+    }
+
     const orderPayload = {
       customer: {
         customerName: name,
@@ -149,6 +185,8 @@ export default function Cart({ title }) {
         pinCode,
         city,
         state,
+        distanceKm: deliveryCheckResult.distanceKm,
+        withinFreeDeliveryRange: deliveryCheckResult.withinFreeRange,
       },
       orderItems: items.map((item) => ({
         productId: item.id,
@@ -349,9 +387,37 @@ export default function Cart({ title }) {
                     type="name"
                     id="pinCode"
                     value={pinCode}
-                    onChange={(e) => setPinCode(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+                      setPinCode(value);
+                      setDeliveryCheckResult(null);
+                      setDeliveryCheckError("");
+                    }}
                     required
                   />
+                  <button
+                    type="button"
+                    className="delivery-check-btn"
+                    onClick={handleCheckDelivery}
+                    disabled={isCheckingDelivery}
+                  >
+                    {isCheckingDelivery ? "Checking..." : "Check Delivery Range"}
+                  </button>
+                  {deliveryCheckError ? (
+                    <p className="delivery-check-msg error">{deliveryCheckError}</p>
+                  ) : null}
+                  {deliveryCheckResult ? (
+                    <p
+                      className={`delivery-check-msg ${
+                        deliveryCheckResult.withinFreeRange ? "success" : "warning"
+                      }`}
+                    >
+                      Distance: {deliveryCheckResult.distanceKm} km from store.{" "}
+                      {deliveryCheckResult.withinFreeRange
+                        ? `Eligible for free delivery (within ${deliveryCheckResult.freeDeliveryRadiusKm} km).`
+                        : `Outside free range (${deliveryCheckResult.freeDeliveryRadiusKm} km). Delivery charge will apply.`}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="form-group">
                   <label htmlFor="city">City:</label>

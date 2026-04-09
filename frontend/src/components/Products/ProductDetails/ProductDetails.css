@@ -15,10 +15,10 @@
 
 #ProductImg {
   max-height: 380px;
-  max-width: auto;
+  width: 100%;
   object-fit: contain;
-  display: flex;
-  padding-left: 100px;
+  display: block;
+  padding-left: 40px;
 }
 
 #col-2 {
@@ -32,36 +32,117 @@
 
 .h1 {
   font-size: 1.8rem;
-  line-height: 2;
+  line-height: 1.35;
+  margin: 8px 0 12px;
 }
 
+.product-details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.price-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
 .h4 {
-  font-size: 1.2rem;
+  font-size: 1.45rem;
   font-weight: bold;
-  margin: 7px 10px 0 0;
+  margin: 0;
   color: #555;
-  display: inline-block;
+  display: block;
 }
 
 .h6 {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   text-decoration: 0.1rem solid line-through;
   color: #868585;
-  display: inline-block;
+  display: block;
+  margin: 0;
 }
 .h5 {
-  display: inline-block;
-  margin-left: 10px;
+  display: inline-flex;
+  margin-left: 0;
   font-size: 12px;
   background: #dedbdb;
-  padding: 1px 4px;
+  padding: 2px 7px;
   border-radius: 5px;
+  align-items: center;
 }
 
 .quantity {
   display: flex;
-  margin: -10px 0 20px 0;
+  margin: 0;
   align-items: center;
+}
+.quantity-block {
+  display: block;
+}
+.weight-label {
+  margin: 2px 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #173334;
+}
+.pd-weight-dropdown {
+  position: relative;
+  max-width: 420px;
+  padding-bottom: 6px;
+}
+.pd-weight-dropdown-trigger {
+  width: 100%;
+  border: 1px solid #c7c7c7;
+  background: #fff;
+  color: #173334;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.pd-weight-dropdown-arrow {
+  font-size: 10px;
+}
+.pd-weight-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 1px solid #d3d3d3;
+  border-radius: 10px;
+  z-index: 30;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  display: none;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.pd-weight-dropdown:hover .pd-weight-dropdown-menu,
+.pd-weight-dropdown:focus-within .pd-weight-dropdown-menu {
+  display: block;
+}
+.pd-weight-option-row {
+  border-bottom: 1px solid #efefef;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  background: #fff;
+}
+.pd-weight-option-row:last-child {
+  border-bottom: none;
+}
+.pd-weight-option-row.active {
+  background: #f4fbfb;
 }
 .quantity select {
   height: 26px;
@@ -82,8 +163,49 @@ input {
 }
 
 .quantity p {
-  margin-left: 10px;
+  margin: 0;
   font-size: small;
+}
+.weight-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 2px;
+  max-width: 420px;
+}
+.weight-option-label {
+  font-weight: 600;
+  color: #173334;
+}
+.weight-option-price {
+  font-weight: 700;
+  color: #333;
+}
+.pd-qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 3px 4px;
+  background: #fff;
+}
+.pd-qty-stepper .AddToCart,
+.pd-weight-option-row > .AddToCart {
+  margin-top: 0;
+  width: 36px;
+  min-width: 36px;
+  height: 30px;
+  padding: 0;
+}
+.pack-preview {
+  margin-top: 10px !important;
+  color: #555;
+}
+.cart-note {
+  margin-top: 6px !important;
+  color: #173334;
+  font-weight: 600;
 }
 input:focus {
   outline: none;
@@ -100,12 +222,24 @@ h3 {
 
 .description {
   font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .AddToCart {
-  height: 40px;
-  width: 150px;
-  margin-top: 24px;
+  height: 36px;
+  min-width: 44px;
+  width: auto;
+  padding: 0 14px;
+  margin-top: 8px;
+  border-radius: 8px;
+}
+
+.details-stepper {
+  margin-top: 6px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .AddToCart:hover {
@@ -162,7 +296,12 @@ h3 {
     font-size: 0.9rem;
   }
   .AddToCart {
-    height: 30px;
-    width: 120px;
+    height: 34px;
+    min-width: 42px;
+    width: auto;
+    padding: 0 12px;
+  }
+  .weight-option-list {
+    max-width: 100%;
   }
 }

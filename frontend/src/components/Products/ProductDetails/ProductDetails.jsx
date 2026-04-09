@@ -8,13 +8,15 @@ import { useCart } from "../../../context/CartContext";
 
 export default function ProductDetails() {
   const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
-  const { items } = useCart();
+  const { items, addToCart, updateQuantity, removeFromCart } = useCart();
+  const WEIGHT_OPTIONS = [250, 500, 1000, 5000, 10000];
+  const formatWeightLabel = (weight) =>
+    weight >= 1000 ? `${weight / 1000}Kg` : `${weight}gm`;
 
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [categoryName, setCategoryName] = useState("");
-  const [selectedOption, setSelectedOption] = useState("");
-  const [quantity, setQuantity] = useState(1); // Initialize quantity to 1
+  const [selectedOption, setSelectedOption] = useState("1000");
   const [packsText, setPacksText] = useState("");
 
   useEffect(() => {
@@ -46,60 +48,52 @@ export default function ProductDetails() {
     fetchProduct();
   }, [id]);
 
+  const getPackValues = (isCustomizable, selectedWeight) => {
+    const basePrice = Number(product?.productPrice) || 0;
+    const baseMrp = Number(product?.productMrp) || 0;
+    if (!isCustomizable) {
+      return { packPrice: basePrice, packMrp: baseMrp };
+    }
+    return {
+      packPrice: Number(((basePrice * selectedWeight) / 1000).toFixed(2)),
+      packMrp: Number(((baseMrp * selectedWeight) / 1000).toFixed(2)),
+    };
+  };
+
   useEffect(() => {
-    if (selectedOption && quantity > 0) {
-      const costPerKg = product.productPrice / 1000;
-      const weightInKg = selectedOption / 1000;
-      const totalCost = costPerKg * quantity * weightInKg * 1000;
-
-      if (quantity === 1) {
-        const displayOption =
-          selectedOption >= 1000
-            ? `${selectedOption / 1000} kg`
-            : `${selectedOption} gm`;
-        setPacksText(`1 pack of ${displayOption} = ₹${totalCost.toFixed(2)}`);
-      } else if (quantity > 1) {
-        const displayOption =
-          selectedOption >= 1000
-            ? `${selectedOption / 1000} kg`
-            : `${selectedOption} gm`;
-        setPacksText(
-          `${quantity} packs of ${displayOption} = ₹${totalCost.toFixed(2)}`
-        );
-      } else {
-        setPacksText("");
-      }
+    if (!product) return;
+    const isCustomizable =
+      String(product.productSize).toLowerCase() === "customizable";
+    if (!isCustomizable) {
+      setPacksText("");
+      return;
     }
-  }, [quantity, selectedOption, product]);
-
-  const handleOptionChange = (e) => {
-    const newSelectedOption = e.target.value;
-    setSelectedOption(newSelectedOption);
-  };
-
-  const handleQuantityChange = (e) => {
-    const newQuantity = parseInt(e.target.value, 10);
-    if (newQuantity >= 1) {
-      setQuantity(newQuantity);
-    } else {
-      setQuantity(1);
+    if (!selectedOption) {
+      setPacksText("");
+      return;
     }
-  };
+    const selectedWeight = Number(selectedOption);
+    const selectedPackQuantityInCart = items.reduce(
+      (total, item) =>
+        item.id === product._id && item.weight === selectedWeight
+          ? total + item.quantity
+          : total,
+      0
+    );
+    const previewQty = Math.max(selectedPackQuantityInCart, 1);
+    const { packPrice } = getPackValues(true, selectedWeight);
+    const totalCost = packPrice * previewQty;
+    const displayOption =
+      selectedWeight >= 1000
+        ? `${selectedWeight / 1000} kg`
+        : `${selectedWeight} gm`;
+    setPacksText(
+      `${previewQty} pack(s) of ${displayOption} = ₹${totalCost.toFixed(2)}`
+    );
+  }, [selectedOption, product, items]);
 
-  const handleAddToCart = () => {
-    if (product.productSize === "Customizable") {
-      if (selectedOption) {
-        // Add to cart works
-      } else {
-        alert("Please select a valid option before adding to cart.");
-      }
-    } else {
-      if (quantity > 0) {
-        // Add to cart works
-      } else {
-        alert("Please select a valid quantity before adding to cart.");
-      }
-    }
+  const handleOptionChange = (weight) => {
+    setSelectedOption(String(weight));
   };
 
   return (
@@ -110,9 +104,11 @@ export default function ProductDetails() {
           (() => {
             const isCustomizable =
               String(product.productSize).toLowerCase() === "customizable";
-            const selectedWeight = selectedOption ? Number(selectedOption) : null;
+            const selectedWeight = selectedOption
+              ? Number(selectedOption)
+              : 1000;
             const selectedPackQuantityInCart =
-              isCustomizable && selectedWeight
+              isCustomizable && selectedOption
                 ? items.reduce(
                     (total, item) =>
                       item.id === product._id && item.weight === selectedWeight
@@ -134,6 +130,38 @@ export default function ProductDetails() {
                   0
                 )
               : 0;
+            const { packPrice, packMrp } = getPackValues(
+              isCustomizable,
+              selectedWeight
+            );
+
+            const handleAddOne = () => {
+              addToCart({
+                id: product._id,
+                name: product.productName,
+                image: product.image,
+                price: packPrice,
+                mrp: packMrp,
+                quantity: 1,
+                weight: isCustomizable ? selectedWeight : null,
+                sizeType: product.productSize,
+              });
+            };
+
+            const handleDecreaseOne = () => {
+              const currentQty = isCustomizable
+                ? selectedPackQuantityInCart
+                : nonCustomizableQuantityInCart;
+              if (currentQty <= 1) {
+                removeFromCart(product._id, isCustomizable ? selectedWeight : null);
+                return;
+              }
+              updateQuantity(
+                product._id,
+                isCustomizable ? selectedWeight : null,
+                currentQty - 1
+              );
+            };
             return (
           <div id="product-details-row">
             <div id="col-2">
@@ -144,16 +172,16 @@ export default function ProductDetails() {
               />
             </div>
 
-            <div id="col-2">
+            <div id="col-2" className="product-details-content">
               <p className="navigator">
                 <Link to="/">Home</Link> / {categoryName}
               </p>
               <h1 className="h1">{product.productName}</h1>
-              <div className="price">
-                <h4 className="h4">₹{product.productPrice}.00</h4>
+              <div className="price price-row">
+                <h4 className="h4">₹{packPrice.toFixed(2)}</h4>
                 {isCustomizable ? (
                   <h6 className="h6">
-                    ₹{product.productMrp}.00/
+                    ₹{packMrp.toFixed(2)}/
                     <span style={{ fontSize: "13px" }}>Kg</span>
                   </h6>
                 ) : (
@@ -171,58 +199,119 @@ export default function ProductDetails() {
                   % OFF
                 </h5>
               </div>
-              <br />
               {isCustomizable ? (
-                <div className="quantity">
-                  <select
-                    name=""
-                    onChange={handleOptionChange}
-                    value={selectedOption}
-                  >
-                    <option>Select Weight</option>
-                    <option value="250">250gm</option>
-                    <option value="500">500gm</option>
-                    <option value="1000">1Kg</option>
-                    <option value="5000">5Kg</option>
-                    <option value="10000">10Kg</option>
-                  </select>
-                  {selectedOption && (
-                    <>
-                      <input
-                        type="number"
-                        value={quantity}
-                        onChange={handleQuantityChange}
-                        min="1"
-                      />
-                      <p>{packsText}</p>
-                      {selectedPackQuantityInCart > 0 ? (
-                        <p style={{ color: "#173334", fontWeight: "600" }}>
-                          {selectedPackQuantityInCart} pack(s) of{" "}
-                          {selectedWeight >= 1000
-                            ? `${selectedWeight / 1000}kg`
-                            : `${selectedWeight}gm`}{" "}
-                          in cart
-                        </p>
-                      ) : null}
-                    </>
-                  )}
-                  {!selectedOption && totalCustomizableQuantityInCart > 0 ? (
-                    <p style={{ color: "#173334", fontWeight: "600" }}>
+                <div className="quantity quantity-block">
+                  <div className="pd-weight-dropdown">
+                    <button type="button" className="pd-weight-dropdown-trigger">
+                      Customize weight
+                      <span className="pd-weight-dropdown-arrow">▾</span>
+                    </button>
+                    <div className="pd-weight-dropdown-menu">
+                      {WEIGHT_OPTIONS.map((weight) => {
+                        const qtyForWeight = items.reduce(
+                          (total, item) =>
+                            item.id === product._id && item.weight === weight
+                              ? total + item.quantity
+                              : total,
+                          0
+                        );
+                        const { packPrice: weightPackPrice } = getPackValues(true, weight);
+                        return (
+                          <div
+                            key={`${product._id}-${weight}`}
+                            className={`pd-weight-option-row ${
+                              selectedWeight === weight ? "active" : ""
+                            }`}
+                            onClick={() => handleOptionChange(weight)}
+                          >
+                            <span className="weight-option-label">
+                              {formatWeightLabel(weight)}
+                            </span>
+                            <span className="weight-option-price">
+                              ₹{weightPackPrice.toFixed(2)}
+                            </span>
+                            {qtyForWeight > 0 ? (
+                              <div className="pd-qty-stepper">
+                                <button
+                                  type="button"
+                                  className="AddToCart"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (qtyForWeight <= 1) {
+                                      removeFromCart(product._id, weight);
+                                      return;
+                                    }
+                                    updateQuantity(product._id, weight, qtyForWeight - 1);
+                                  }}
+                                >
+                                  -
+                                </button>
+                                <span>{qtyForWeight}</span>
+                                <button
+                                  type="button"
+                                  className="AddToCart"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const { packPrice: p, packMrp: m } = getPackValues(
+                                      true,
+                                      weight
+                                    );
+                                    addToCart({
+                                      id: product._id,
+                                      name: product.productName,
+                                      image: product.image,
+                                      price: p,
+                                      mrp: m,
+                                      quantity: 1,
+                                      weight,
+                                      sizeType: product.productSize,
+                                    });
+                                  }}
+                                >
+                                  +
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                type="button"
+                                className="AddToCart"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const { packPrice: p, packMrp: m } = getPackValues(
+                                    true,
+                                    weight
+                                  );
+                                  addToCart({
+                                    id: product._id,
+                                    name: product.productName,
+                                    image: product.image,
+                                    price: p,
+                                    mrp: m,
+                                    quantity: 1,
+                                    weight,
+                                    sizeType: product.productSize,
+                                  });
+                                }}
+                              >
+                                +
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <p className="pack-preview">{packsText}</p>
+                  {totalCustomizableQuantityInCart > 0 ? (
+                    <p className="cart-note">
                       {totalCustomizableQuantityInCart} customizable pack(s) already in cart
                     </p>
                   ) : null}
                 </div>
               ) : (
-                // Render the quantity input for Non-Customizable products
                 <div className="quantity">
-                  <input
-                    type="number"
-                    value={quantity}
-                    onChange={handleQuantityChange}
-                    min="1"
-                  />
                   {nonCustomizableQuantityInCart > 0 ? (
-                    <p style={{ color: "#173334", fontWeight: "600" }}>
+                    <p className="cart-note">
                       {nonCustomizableQuantityInCart} unit(s) in cart
                     </p>
                   ) : null}
@@ -232,33 +321,22 @@ export default function ProductDetails() {
                 Product Details <i className="icon fa fa-indent"></i>
               </h3>
               <p className="description">{product.productDescription}</p>
-              {isCustomizable ? (
-                selectedOption ? (
-                  <Link
-                    to={`/cart?productId=${product._id}&quantity=${quantity}&weight=${selectedOption}`}
-                  >
-                    <button type="submit" className="AddToCart">
-                      {selectedPackQuantityInCart > 0 ? "Add +1 Pack" : "Add To Cart"}
+              {!isCustomizable ? (
+                nonCustomizableQuantityInCart > 0 ? (
+                  <div className="details-stepper">
+                    <button type="button" className="AddToCart" onClick={handleDecreaseOne}>
+                      -
                     </button>
-                  </Link>
+                    <button type="button" className="AddToCart" onClick={handleAddOne}>
+                      {nonCustomizableQuantityInCart} in cart (+)
+                    </button>
+                  </div>
                 ) : (
-                  <button
-                    type="submit"
-                    className="AddToCart"
-                    onClick={handleAddToCart}
-                  >
+                  <button type="button" className="AddToCart" onClick={handleAddOne}>
                     Add To Cart
                   </button>
                 )
-              ) : (
-                <Link
-                  to={`/cart?productId=${product._id}&quantity=${quantity}`}
-                >
-                  <button type="submit" className="AddToCart">
-                    {nonCustomizableQuantityInCart > 0 ? "Add +1" : "Add To Cart"}
-                  </button>
-                </Link>
-              )}
+              ) : null}
             </div>
           </div>
             );

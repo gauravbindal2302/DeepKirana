@@ -24,6 +24,9 @@ const DB = process.env.DATABASE;
 const PORT = process.env.PORT;
 const SECRET_KEY = process.env.KEY;
 const SERVER_URL = process.env.API_URL;
+const STORE_LATITUDE = Number(process.env.STORE_LATITUDE || "28.6139");
+const STORE_LONGITUDE = Number(process.env.STORE_LONGITUDE || "77.209");
+const FREE_DELIVERY_RADIUS_KM = Number(process.env.FREE_DELIVERY_RADIUS_KM || "5");
 
 // Connect to the MongoDB database
 mongoose
@@ -48,6 +51,21 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+const toRad = (value) => (value * Math.PI) / 180;
+const calculateDistanceInKm = (lat1, lon1, lat2, lon2) => {
+  const earthRadiusKm = 6371;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return earthRadiusKm * c;
+};
 
 /*
 //Admin schema and model
@@ -382,6 +400,67 @@ server.get("/details/:id", async (req, res) => {
   }
 });
 
+// Route handler for checking delivery feasibility by pincode distance
+server.get("/delivery/check", async (req, res) => {
+  try {
+    const rawPinCode = String(req.query.pinCode || "").trim();
+    const pinCode = rawPinCode.replace(/\D/g, "");
+
+    if (!/^\d{6}$/.test(pinCode)) {
+      return res.status(400).json({ error: "Please provide a valid 6-digit pincode." });
+    }
+
+    const query = encodeURIComponent(`${pinCode}, India`);
+    const geoUrl = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${query}`;
+    const response = await fetch(geoUrl, {
+      headers: {
+        "User-Agent": "deepstore-delivery-check/1.0",
+      },
+    });
+
+    if (!response.ok) {
+      return res.status(502).json({ error: "Unable to validate pincode right now." });
+    }
+
+    const locations = await response.json();
+    if (!Array.isArray(locations) || locations.length === 0) {
+      return res.status(404).json({ error: "Pincode location not found." });
+    }
+
+    const location = locations[0];
+    const targetLatitude = Number(location.lat);
+    const targetLongitude = Number(location.lon);
+
+    if (!Number.isFinite(targetLatitude) || !Number.isFinite(targetLongitude)) {
+      return res.status(500).json({ error: "Failed to process pincode location." });
+    }
+
+    const distanceKm = calculateDistanceInKm(
+      STORE_LATITUDE,
+      STORE_LONGITUDE,
+      targetLatitude,
+      targetLongitude
+    );
+
+    const roundedDistanceKm = Number(distanceKm.toFixed(2));
+    const withinFreeRange = roundedDistanceKm <= FREE_DELIVERY_RADIUS_KM;
+
+    return res.status(200).json({
+      pinCode,
+      distanceKm: roundedDistanceKm,
+      freeDeliveryRadiusKm: FREE_DELIVERY_RADIUS_KM,
+      withinFreeRange,
+      storeCoordinates: {
+        latitude: STORE_LATITUDE,
+        longitude: STORE_LONGITUDE,
+      },
+    });
+  } catch (error) {
+    console.error("Error checking delivery range:", error);
+    return res.status(500).json({ error: "Failed to check delivery range." });
+  }
+});
+
 // Create schemas for customer orders
 const orderItemSchema = new mongoose.Schema(
   {
@@ -406,6 +485,8 @@ const orderSchema = new mongoose.Schema(
       pinCode: { type: String, required: true },
       city: { type: String, required: true },
       state: { type: String, required: true },
+      distanceKm: { type: Number, default: null },
+      withinFreeDeliveryRange: { type: Boolean, default: null },
     },
     orderItems: [orderItemSchema],
     paymentMethod: { type: String, required: true },
