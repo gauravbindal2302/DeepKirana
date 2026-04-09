@@ -4,9 +4,11 @@ import Navbar from "../../Navbar/Navbar";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import "./ProductDetails.css";
+import { useCart } from "../../../context/CartContext";
 
 export default function ProductDetails() {
   const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
+  const { items } = useCart();
 
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -108,6 +110,30 @@ export default function ProductDetails() {
           (() => {
             const isCustomizable =
               String(product.productSize).toLowerCase() === "customizable";
+            const selectedWeight = selectedOption ? Number(selectedOption) : null;
+            const selectedPackQuantityInCart =
+              isCustomizable && selectedWeight
+                ? items.reduce(
+                    (total, item) =>
+                      item.id === product._id && item.weight === selectedWeight
+                        ? total + item.quantity
+                        : total,
+                    0
+                  )
+                : 0;
+            const totalCustomizableQuantityInCart = isCustomizable
+              ? items.reduce(
+                  (total, item) => (item.id === product._id ? total + item.quantity : total),
+                  0
+                )
+              : 0;
+            const nonCustomizableQuantityInCart = !isCustomizable
+              ? items.reduce(
+                  (total, item) =>
+                    item.id === product._id && !item.weight ? total + item.quantity : total,
+                  0
+                )
+              : 0;
             return (
           <div id="product-details-row">
             <div id="col-2">
@@ -169,8 +195,22 @@ export default function ProductDetails() {
                         min="1"
                       />
                       <p>{packsText}</p>
+                      {selectedPackQuantityInCart > 0 ? (
+                        <p style={{ color: "#173334", fontWeight: "600" }}>
+                          {selectedPackQuantityInCart} pack(s) of{" "}
+                          {selectedWeight >= 1000
+                            ? `${selectedWeight / 1000}kg`
+                            : `${selectedWeight}gm`}{" "}
+                          in cart
+                        </p>
+                      ) : null}
                     </>
                   )}
+                  {!selectedOption && totalCustomizableQuantityInCart > 0 ? (
+                    <p style={{ color: "#173334", fontWeight: "600" }}>
+                      {totalCustomizableQuantityInCart} customizable pack(s) already in cart
+                    </p>
+                  ) : null}
                 </div>
               ) : (
                 // Render the quantity input for Non-Customizable products
@@ -181,6 +221,11 @@ export default function ProductDetails() {
                     onChange={handleQuantityChange}
                     min="1"
                   />
+                  {nonCustomizableQuantityInCart > 0 ? (
+                    <p style={{ color: "#173334", fontWeight: "600" }}>
+                      {nonCustomizableQuantityInCart} unit(s) in cart
+                    </p>
+                  ) : null}
                 </div>
               )}
               <h3 className="h3">
@@ -193,7 +238,7 @@ export default function ProductDetails() {
                     to={`/cart?productId=${product._id}&quantity=${quantity}&weight=${selectedOption}`}
                   >
                     <button type="submit" className="AddToCart">
-                      Add To Cart
+                      {selectedPackQuantityInCart > 0 ? "Add +1 Pack" : "Add To Cart"}
                     </button>
                   </Link>
                 ) : (
@@ -210,7 +255,7 @@ export default function ProductDetails() {
                   to={`/cart?productId=${product._id}&quantity=${quantity}`}
                 >
                   <button type="submit" className="AddToCart">
-                    Add To Cart
+                    {nonCustomizableQuantityInCart > 0 ? "Add +1" : "Add To Cart"}
                   </button>
                 </Link>
               )}

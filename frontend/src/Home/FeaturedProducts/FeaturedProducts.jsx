@@ -4,9 +4,11 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import axios from "axios";
 import "./FeaturedProducts.css";
+import { useCart } from "../../context/CartContext";
 
 export default function FeaturedProducts() {
   const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
+  const { items } = useCart();
 
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -77,6 +79,17 @@ export default function FeaturedProducts() {
               .map((product) => {
                 const isCustomizable =
                   String(product.productSize).toLowerCase() === "customizable";
+                const defaultWeight = 1000;
+                const cartQuantityForDefaultPack = items.reduce(
+                  (total, item) =>
+                    item.id === product._id &&
+                    (isCustomizable ? item.weight === defaultWeight : !item.weight)
+                      ? total + item.quantity
+                      : total,
+                  0
+                );
+                const addToCartLabel =
+                  cartQuantityForDefaultPack > 0 ? "Add +1" : "Add To Cart";
                 return (
                 <div className="col-4" key={product._id}>
                   <Link to={"/details/" + product._id}>
@@ -114,13 +127,20 @@ export default function FeaturedProducts() {
                     <Link
                       to={`/cart?productId=${product._id}&quantity=1&weight=1000`}
                     >
-                      <button className="AddToCart-Btn">Add To Cart</button>
+                      <button className="AddToCart-Btn">{addToCartLabel}</button>
                     </Link>
                   ) : (
                     <Link to={`/cart?productId=${product._id}&quantity=1`}>
-                      <button className="AddToCart-Btn">Add To Cart</button>
+                      <button className="AddToCart-Btn">{addToCartLabel}</button>
                     </Link>
                   )}
+                  {cartQuantityForDefaultPack > 0 ? (
+                    <p style={{ marginTop: "8px", color: "#173334", fontWeight: "600" }}>
+                      {isCustomizable
+                        ? `${cartQuantityForDefaultPack} x 1Kg pack in cart`
+                        : `${cartQuantityForDefaultPack} unit(s) in cart`}
+                    </p>
+                  ) : null}
                 </div>
                 );
               })}

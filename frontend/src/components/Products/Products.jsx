@@ -4,9 +4,11 @@ import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useCart } from "../../context/CartContext";
 
 export default function Products({ title }) {
   const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
+  const { items } = useCart();
 
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -108,6 +110,17 @@ export default function Products({ title }) {
                 {sortedProducts.map((product) => {
                   const isCustomizable =
                     String(product.productSize).toLowerCase() === "customizable";
+                  const defaultWeight = 1000;
+                  const cartQuantityForDefaultPack = items.reduce(
+                    (total, item) =>
+                      item.id === product._id &&
+                      (isCustomizable ? item.weight === defaultWeight : !item.weight)
+                        ? total + item.quantity
+                        : total,
+                    0
+                  );
+                  const addToCartLabel =
+                    cartQuantityForDefaultPack > 0 ? "Add +1" : "Add To Cart";
                   return (
                   <div className="product" key={product._id}>
                     <Link to={"/details/" + product._id}>
@@ -145,13 +158,20 @@ export default function Products({ title }) {
                       <Link
                         to={`/cart?productId=${product._id}&quantity=1&weight=1000`}
                       >
-                        <button className="AddToCart-Btn">Add To Cart</button>
+                        <button className="AddToCart-Btn">{addToCartLabel}</button>
                       </Link>
                     ) : (
                       <Link to={`/cart?productId=${product._id}&quantity=1`}>
-                        <button className="AddToCart-Btn">Add To Cart</button>
+                        <button className="AddToCart-Btn">{addToCartLabel}</button>
                       </Link>
                     )}
+                    {cartQuantityForDefaultPack > 0 ? (
+                      <p style={{ marginTop: "8px", color: "#173334", fontWeight: "600" }}>
+                        {isCustomizable
+                          ? `${cartQuantityForDefaultPack} x 1Kg pack in cart`
+                          : `${cartQuantityForDefaultPack} unit(s) in cart`}
+                      </p>
+                    ) : null}
                   </div>
                 );
                 })}
