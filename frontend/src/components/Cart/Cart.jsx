@@ -64,14 +64,28 @@ export default function Cart({ title }) {
           return;
         }
 
+        const parsedPrice = Number(product.productPrice) || 0;
+        const parsedMrp = Number(product.productMrp) || 0;
+        const isCustomizable = product.productSize === "Customizable";
+        const selectedWeight = incomingWeight || 1000;
+
+        // For customizable products, productPrice/productMrp are per Kg values.
+        // Cart stores per-pack values based on selected weight.
+        const calculatedPackPrice = isCustomizable
+          ? Number(((parsedPrice * selectedWeight) / 1000).toFixed(2))
+          : parsedPrice;
+        const calculatedPackMrp = isCustomizable
+          ? Number(((parsedMrp * selectedWeight) / 1000).toFixed(2))
+          : parsedMrp;
+
         addToCart({
           id: product._id,
           name: product.productName,
           image: product.image,
-          price: Number(product.productPrice) || 0,
-          mrp: Number(product.productMrp) || 0,
+          price: calculatedPackPrice,
+          mrp: calculatedPackMrp,
           quantity: incomingQuantity,
-          weight: product.productSize === "Customizable" ? incomingWeight : null,
+          weight: isCustomizable ? selectedWeight : null,
           sizeType: product.productSize,
         });
       } catch (error) {
