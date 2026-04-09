@@ -5,10 +5,9 @@ import Footer from "../components/Footer/Footer";
 import FeaturedCategories from "./FeaturedCategories/FeaturedCategories";
 import FeaturedProducts from "./FeaturedProducts/FeaturedProducts";
 import axios from "axios";
+import { SERVER_URL } from "../config/serverUrl";
 
 export default function Home({ title }) {
-  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
-
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {

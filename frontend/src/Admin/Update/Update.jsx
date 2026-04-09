@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Header1, CRUD } from "../Admin";
 import axios from "axios";
+import { SERVER_URL } from "../../config/serverUrl";
 
 export default function Update({ title }) {
-  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
-
   const [categories, setCategories] = useState([]);
   const [selectedCategory1, setSelectedCategory1] = useState("");
   const [selectedCategory2, setSelectedCategory2] = useState("");
