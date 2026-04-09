@@ -382,6 +382,138 @@ server.get("/details/:id", async (req, res) => {
   }
 });
 
+// Create schemas for customer orders
+const orderItemSchema = new mongoose.Schema(
+  {
+    productId: String,
+    productName: String,
+    productSize: String,
+    productQuantity: Number,
+    productPrice: Number,
+    productMRP: Number,
+  },
+  { _id: false }
+);
+
+const orderSchema = new mongoose.Schema(
+  {
+    customer: {
+      customerName: { type: String, required: true },
+      mobileNumber: { type: String, required: true },
+      houseNumber: { type: String, required: true },
+      streetName: { type: String, required: true },
+      landmark: { type: String, default: "" },
+      pinCode: { type: String, required: true },
+      city: { type: String, required: true },
+      state: { type: String, required: true },
+    },
+    orderItems: [orderItemSchema],
+    paymentMethod: { type: String, required: true },
+    orderStatus: { type: String, default: "Pending" },
+    deliveryStatus: { type: String, default: "Not Sent" },
+    subtotal: { type: Number, required: true },
+    deliveryCharge: { type: Number, required: true },
+    totalAmount: { type: Number, required: true },
+  },
+  { timestamps: true }
+);
+
+const Order = mongoose.model("Order", orderSchema);
+
+// Route handler for creating a customer order
+server.post("/orders", async (req, res) => {
+  try {
+    const {
+      customer,
+      orderItems,
+      paymentMethod,
+      subtotal,
+      deliveryCharge,
+      totalAmount,
+    } = req.body;
+
+    if (!customer || !Array.isArray(orderItems) || orderItems.length === 0) {
+      return res.status(400).json({ error: "Invalid order payload" });
+    }
+
+    const newOrder = new Order({
+      customer,
+      orderItems,
+      paymentMethod,
+      subtotal,
+      deliveryCharge,
+      totalAmount,
+    });
+
+    await newOrder.save();
+    return res.status(201).json({ message: "Order placed", order: newOrder });
+  } catch (error) {
+    console.error("Error creating order:", error);
+    return res.status(500).json({ error: "Failed to create order" });
+  }
+});
+
+// Route handler for fetching all orders
+server.get("/orders", async (req, res) => {
+  try {
+    const orders = await Order.find({}).sort({ createdAt: -1 });
+    return res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    return res.status(500).json({ error: "Failed to fetch orders" });
+  }
+});
+
+// Route handler for fetching single order details
+server.get("/orders/:id", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+    return res.status(200).json(order);
+  } catch (error) {
+    console.error("Error fetching order details:", error);
+    return res.status(500).json({ error: "Failed to fetch order details" });
+  }
+});
+
+// Route handler for confirming an order
+server.patch("/orders/:id/confirm", async (req, res) => {
+  try {
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { orderStatus: "Confirmed" },
+      { new: true }
+    );
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+    return res.status(200).json(order);
+  } catch (error) {
+    console.error("Error confirming order:", error);
+    return res.status(500).json({ error: "Failed to confirm order" });
+  }
+});
+
+// Route handler for marking order as sent
+server.patch("/orders/:id/deliver", async (req, res) => {
+  try {
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { deliveryStatus: "Sent" },
+      { new: true }
+    );
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+    return res.status(200).json(order);
+  } catch (error) {
+    console.error("Error updating delivery status:", error);
+    return res.status(500).json({ error: "Failed to update delivery status" });
+  }
+});
+
 // Create a schema for the contact form
 const contactSchema = new mongoose.Schema({
   fName: String,

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./Cart.css";
@@ -10,7 +10,9 @@ export default function Cart({ title }) {
   const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { items, addToCart, updateQuantity, removeFromCart, itemCount } = useCart();
+  const { items, addToCart, updateQuantity, removeFromCart, itemCount, clearCart } =
+    useCart();
+  const processedAddRequestRef = useRef("");
 
   const totalPrice = useMemo(
     () => items.reduce((acc, item) => acc + item.price * item.quantity, 0),
@@ -24,6 +26,7 @@ export default function Cart({ title }) {
   useEffect(() => {
     const productId = searchParams.get("productId");
     if (!productId) {
+      processedAddRequestRef.current = "";
       return;
     }
 
@@ -32,6 +35,13 @@ export default function Cart({ title }) {
       parseInt(searchParams.get("quantity") || "1", 10)
     );
     const incomingWeight = parseInt(searchParams.get("weight") || "0", 10) || null;
+    const requestKey = `${productId}-${incomingQuantity}-${incomingWeight || "unit"}`;
+
+    // Prevent double-add in React Strict Mode/dev effect re-runs.
+    if (processedAddRequestRef.current === requestKey) {
+      return;
+    }
+    processedAddRequestRef.current = requestKey;
 
     async function addProductFromQuery() {
       try {
@@ -96,24 +106,68 @@ export default function Cart({ title }) {
   const [state, setState] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [showPaymentNote, setShowPaymentNote] = useState(false); // To show/hide the payment note
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+
+  const deliveryCharge = totalPrice >= 499 ? 0 : 60;
+  const totalAmount = totalPrice + deliveryCharge;
 
   // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    // You can access the collected data here and proceed with the order
-    console.log("Submitted Data:", {
-      name,
-      mobileNumber,
-      houseNo,
-      streetName,
-      landmark,
-      pinCode,
-      city,
-      state,
+
+    if (items.length === 0) {
+      alert("Your cart is empty. Please add items before placing order.");
+      return;
+    }
+
+    if (!paymentMethod) {
+      alert("Please select a payment method.");
+      return;
+    }
+
+    const orderPayload = {
+      customer: {
+        customerName: name,
+        mobileNumber,
+        houseNumber: houseNo,
+        streetName,
+        landmark,
+        pinCode,
+        city,
+        state,
+      },
+      orderItems: items.map((item) => ({
+        productId: item.id,
+        productName: item.name,
+        productSize: item.weight
+          ? item.weight >= 1000
+            ? `${item.weight / 1000}kg`
+            : `${item.weight}gm`
+          : "unit",
+        productQuantity: item.quantity,
+        productPrice: Number(item.price),
+        productMRP: Number(item.mrp || item.price),
+      })),
       paymentMethod,
-    });
-    // Set showOrderSection to true to display the order section
-    setShowOrderSection(true);
+      subtotal: Number(totalPrice.toFixed(2)),
+      deliveryCharge,
+      totalAmount: Number(totalAmount.toFixed(2)),
+    };
+
+    setIsPlacingOrder(true);
+    axios
+      .post(`${SERVER_URL}/orders`, orderPayload)
+      .then((res) => {
+        clearCart();
+        navigate(`/order-confirmation/${res.data.order._id}`);
+      })
+      .catch((error) => {
+        console.error("Error placing order:", error);
+        alert("Unable to place order right now. Please try again.");
+      })
+      .finally(() => {
+        setIsPlacingOrder(false);
+      });
   };
 
   // Function to toggle the visibility of the payment note for the selected payment method
@@ -330,8 +384,9 @@ export default function Cart({ title }) {
                 {showPaymentNote === "UPI" && (
                   <div className="UPI-section">
                     <p>
-                      [Total Amount: ₹{totalPrice.toFixed(2)} + ₹60.00
-                      (Delivery) = ₹910.00]
+                      [Total Amount: ₹{totalPrice.toFixed(2)} + ₹
+                      {deliveryCharge.toFixed(2)} (Delivery) = ₹
+                      {totalAmount.toFixed(2)}]
                     </p>
                     <ul>
                       Follow these steps:
@@ -344,7 +399,8 @@ export default function Cart({ title }) {
                       <li>
                         <label>Step-2</label>
                         <span>
-                          Pay Amount of ₹910.00 using UPI number 4567891234
+                          Pay Amount of ₹{totalAmount.toFixed(2)} using UPI
+                          number 4567891234
                         </span>
                       </li>
                       <li>
@@ -355,8 +411,12 @@ export default function Cart({ title }) {
                         </span>
                       </li>
                     </ul>
-                    <button type="submit" className="submit-order-btn">
-                      Place Order
+                    <button
+                      type="submit"
+                      className="submit-order-btn"
+                      disabled={isPlacingOrder}
+                    >
+                      {isPlacingOrder ? "Placing Order..." : "Place Order"}
                     </button>{" "}
                   </div>
                 )}
@@ -377,11 +437,16 @@ export default function Cart({ title }) {
                 {showPaymentNote === "COD" && (
                   <div className="COD-section">
                     <p>
-                      [Total Amount: ₹{totalPrice.toFixed(2)} + ₹60.00
-                      (Delivery)= ₹910.00]
+                      [Total Amount: ₹{totalPrice.toFixed(2)} + ₹
+                      {deliveryCharge.toFixed(2)} (Delivery)= ₹
+                      {totalAmount.toFixed(2)}]
                     </p>
-                    <button type="submit" className="submit-order-btn">
-                      Place Order
+                    <button
+                      type="submit"
+                      className="submit-order-btn"
+                      disabled={isPlacingOrder}
+                    >
+                      {isPlacingOrder ? "Placing Order..." : "Place Order"}
                     </button>
                   </div>
                 )}
