@@ -74,7 +74,10 @@ export default function FeaturedProducts() {
           >
             {products
               .filter((product) => product.category === category.category)
-              .map((product) => (
+              .map((product) => {
+                const isCustomizable =
+                  String(product.productSize).toLowerCase() === "customizable";
+                return (
                 <div className="col-4" key={product._id}>
                   <Link to={"/details/" + product._id}>
                     <img
@@ -84,7 +87,7 @@ export default function FeaturedProducts() {
                     <h4>{product.productName}</h4>
                   </Link>
                   <p>₹{product.productPrice}.00</p>
-                  {product.productSize === "Customizable" ? (
+                  {isCustomizable ? (
                     <h6 className="h6">
                       ₹{product.productMrp}.00/
                       <span style={{ fontSize: "13px" }}>Kg</span>
@@ -107,7 +110,7 @@ export default function FeaturedProducts() {
                   <Link to={"/details/" + product._id}>
                     <button className="BuyNow-Btn">View Product</button>
                   </Link>
-                  {product.productSize === "Customizable" ? (
+                  {isCustomizable ? (
                     <Link
                       to={`/cart?productId=${product._id}&quantity=1&weight=1000`}
                     >
@@ -119,7 +122,8 @@ export default function FeaturedProducts() {
                     </Link>
                   )}
                 </div>
-              ))}
+                );
+              })}
           </Carousel>
         </div>
       ))}

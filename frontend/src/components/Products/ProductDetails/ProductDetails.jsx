@@ -105,6 +105,10 @@ export default function ProductDetails() {
       <Navbar />
       <div className="small-container single-product">
         {product ? (
+          (() => {
+            const isCustomizable =
+              String(product.productSize).toLowerCase() === "customizable";
+            return (
           <div id="product-details-row">
             <div id="col-2">
               <img
@@ -121,7 +125,7 @@ export default function ProductDetails() {
               <h1 className="h1">{product.productName}</h1>
               <div className="price">
                 <h4 className="h4">₹{product.productPrice}.00</h4>
-                {product.productSize === "Customizable" ? (
+                {isCustomizable ? (
                   <h6 className="h6">
                     ₹{product.productMrp}.00/
                     <span style={{ fontSize: "13px" }}>Kg</span>
@@ -142,7 +146,7 @@ export default function ProductDetails() {
                 </h5>
               </div>
               <br />
-              {product.productSize === "Customizable" ? (
+              {isCustomizable ? (
                 <div className="quantity">
                   <select
                     name=""
@@ -183,7 +187,7 @@ export default function ProductDetails() {
                 Product Details <i className="icon fa fa-indent"></i>
               </h3>
               <p className="description">{product.productDescription}</p>
-              {product.productSize === "Customizable" ? (
+              {isCustomizable ? (
                 selectedOption ? (
                   <Link
                     to={`/cart?productId=${product._id}&quantity=${quantity}&weight=${selectedOption}`}
@@ -212,6 +216,8 @@ export default function ProductDetails() {
               )}
             </div>
           </div>
+            );
+          })()
         ) : (
           <p>Loading...</p>
         )}

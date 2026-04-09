@@ -105,7 +105,10 @@ export default function Products({ title }) {
                 </h2>
               </div>
               <div className="products-list">
-                {sortedProducts.map((product) => (
+                {sortedProducts.map((product) => {
+                  const isCustomizable =
+                    String(product.productSize).toLowerCase() === "customizable";
+                  return (
                   <div className="product" key={product._id}>
                     <Link to={"/details/" + product._id}>
                       <img
@@ -115,7 +118,7 @@ export default function Products({ title }) {
                       <h4>{product.productName}</h4>
                     </Link>
                     <p>₹{product.productPrice}.00</p>
-                    {product.productSize === "Customizable" ? (
+                    {isCustomizable ? (
                       <h6 className="h6">
                         ₹{product.productMrp}.00/
                         <span style={{ fontSize: "13px" }}>Kg</span>
@@ -138,7 +141,7 @@ export default function Products({ title }) {
                     <Link to={"/details/" + product._id}>
                       <button className="BuyNow-Btn">View Product</button>
                     </Link>
-                    {product.productSize === "Customizable" ? (
+                    {isCustomizable ? (
                       <Link
                         to={`/cart?productId=${product._id}&quantity=1&weight=1000`}
                       >
@@ -150,7 +153,8 @@ export default function Products({ title }) {
                       </Link>
                     )}
                   </div>
-                ))}
+                );
+                })}
               </div>
             </>
           ) : (
