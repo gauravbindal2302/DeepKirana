@@ -4,9 +4,10 @@ import axios from "axios";
 import "./Contact.css";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
-import { SERVER_URL } from "../../config/serverUrl";
 
 export default function Contact({ title }) {
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
+
   useEffect(() => {
     document.title = title;
   }, [title]);

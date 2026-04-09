@@ -5,9 +5,9 @@ import "./Cart.css";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import { useCart } from "../../context/CartContext";
-import { SERVER_URL } from "../../config/serverUrl";
 
 export default function Cart({ title }) {
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { items, addToCart, updateQuantity, removeFromCart, itemCount } = useCart();

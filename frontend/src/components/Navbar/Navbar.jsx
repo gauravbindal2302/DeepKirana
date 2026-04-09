@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./Navbar.css";
 import { useCart } from "../../context/CartContext";
-import { SERVER_URL } from "../../config/serverUrl";
 
 export default function Navbar(props) {
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
   const { itemCount } = useCart();
 
   const [clicked, setClicked] = useState(false);

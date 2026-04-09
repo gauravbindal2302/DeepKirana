@@ -166,16 +166,11 @@ server.post(
 // Reusable route handler function for fetching (view) categories
 const fetchCategories = async (req, res) => {
   try {
-    const forwardedProto = req.headers["x-forwarded-proto"];
-    const protocol = forwardedProto || req.protocol;
-    const requestBaseUrl = `${protocol}://${req.get("host")}`;
-    const baseUrl = SERVER_URL || requestBaseUrl;
-
     const categories = await Category.find({});
     res.send(
       categories.map((category) => ({
         ...category._doc,
-        image: category.image ? `${baseUrl}/uploads/${category.image}` : null, // Send the full image URL to the client
+        image: `${SERVER_URL}/uploads/${category.image}`, // Send the full image URL to the client
       }))
     );
   } catch (error) {

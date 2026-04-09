@@ -4,9 +4,10 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import axios from "axios";
 import "./FeaturedProducts.css";
-import { SERVER_URL } from "../../config/serverUrl";
 
 export default function FeaturedProducts() {
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
+
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
 

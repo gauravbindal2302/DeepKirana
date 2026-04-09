@@ -2,9 +2,10 @@ import { Header1, CRUD } from "../Admin";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./Add.css";
-import { SERVER_URL } from "../../config/serverUrl";
 
 export default function Add({ title }) {
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
+
   const [categoryImage, setCategoryImage] = useState(null);
   const [categoryName, setCategoryName] = useState("");
   const [categories, setCategories] = useState([]);

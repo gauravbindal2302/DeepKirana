@@ -2,9 +2,10 @@ import { Header1 } from "../Admin";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import "./MessagesReceived.css";
-import { SERVER_URL } from "../../config/serverUrl";
 
 export default function MessagesReceived() {
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
+
   const [messages, setMessages] = useState([]);
   const [expandedMessages, setExpandedMessages] = useState({});
 

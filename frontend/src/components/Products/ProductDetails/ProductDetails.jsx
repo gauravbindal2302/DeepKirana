@@ -4,9 +4,10 @@ import Navbar from "../../Navbar/Navbar";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import "./ProductDetails.css";
-import { SERVER_URL } from "../../../config/serverUrl";
 
 export default function ProductDetails() {
+  const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
+
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [categoryName, setCategoryName] = useState("");
