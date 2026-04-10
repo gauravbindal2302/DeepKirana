@@ -220,12 +220,13 @@ export default function MyOrders({ title }) {
                       <table className="order-bill-table">
                         <thead>
                           <tr>
-                            <th>Item</th>
-                            <th>Qty</th>
-                            <th>MRP</th>
-                            <th>Price</th>
-                            <th>MRP Total</th>
-                            <th>Line Total</th>
+                            <th>SNo.</th>
+                            <th>Product Id</th>
+                            <th>Product Name</th>
+                            <th>Product Size</th>
+                            <th>Product Quantity</th>
+                            <th>Product Price</th>
+                            <th>Product MRP</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -233,18 +234,15 @@ export default function MyOrders({ title }) {
                             const quantity = Number(item.productQuantity || 0);
                             const price = Number(item.productPrice || 0);
                             const mrp = Number(item.productMRP || item.productPrice || 0);
-                            const lineMrpTotal = quantity * mrp;
-                            const lineTotal = quantity * price;
                             return (
                               <tr key={`${order._id}-${idx}`}>
-                                <td>
-                                  {item.productName} ({item.productSize})
-                                </td>
+                                <td>{idx + 1}</td>
+                                <td>{item.productId}</td>
+                                <td>{item.productName}</td>
+                                <td>{item.productSize}</td>
                                 <td>{quantity}</td>
-                                <td>Rs {mrp.toFixed(2)}</td>
                                 <td>Rs {price.toFixed(2)}</td>
-                                <td>Rs {lineMrpTotal.toFixed(2)}</td>
-                                <td>Rs {lineTotal.toFixed(2)}</td>
+                                <td>Rs {mrp.toFixed(2)}</td>
                               </tr>
                             );
                           })}
