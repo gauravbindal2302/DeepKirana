@@ -114,7 +114,7 @@ export default function Dashboard({ title }) {
               </Link>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </>
   );
