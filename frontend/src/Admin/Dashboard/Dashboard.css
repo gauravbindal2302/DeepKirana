@@ -1,75 +1,125 @@
-.admin-header,
-.orders-row,
-.messages-received {
-  padding: 10px;
-  margin: 20px;
-  border: 1px solid #000;
-  border-radius: 10px;
+.dashboard-shell {
+  padding: 24px;
+  background: #f5f8fb;
+  min-height: calc(100vh - 70px);
 }
 
-.admin-header h1,
-.orders-row h1,
-.messages-received h1 {
-  margin-bottom: 15px;
-  text-align: center;
-  font-size: 20px;
+.dashboard-hero {
+  background: linear-gradient(135deg, #173334, #245b5d);
+  color: #fff;
+  padding: 18px 20px;
+  border-radius: 14px;
+}
+
+.dashboard-hero h1 {
+  margin: 0;
+}
+
+.dashboard-hero p {
+  margin: 8px 0 0;
+  color: #d8eaeb;
+}
+
+.dashboard-stats {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #dbe4ef;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.stat-card p {
+  margin: 0;
+  color: #55667d;
+  font-size: 13px;
+}
+
+.stat-card h2 {
+  margin: 8px 0 0;
+  color: #173334;
+}
+
+.dashboard-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.dashboard-card {
+  background: #fff;
+  border: 1px solid #dbe4ef;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.dashboard-card h3 {
+  margin: 0 0 8px;
+  color: #163041;
+}
+
+.dashboard-card p {
+  margin: 0 0 12px;
+  color: #5a6b80;
+  font-size: 14px;
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.feature-pill {
+  border: 1px solid #bfe5cb;
+  background: #eefaf1;
+  color: #206c34;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .operations {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  justify-items: center;
-  align-items: center;
-  margin-bottom: 15px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
 }
 
 .order-buttons {
-  margin: 0 10px 15px 15px;
+  margin-top: 8px;
 }
 
 .admin-button {
   width: 100%;
-  margin: auto;
-  padding: 8px 50px;
+  padding: 8px 14px;
   background-color: #febd2f;
   color: #173334;
-  border: none;
-  border-radius: 5px;
+  border: 1px solid #315636;
+  border-radius: 7px;
   cursor: pointer;
-  transition: background-color 0.1s ease-in-out;
-  border: 0.01rem solid #315636;
+  transition: all 0.16s ease-in-out;
+  font-weight: 700;
 }
 
 .admin-button:hover {
   background-color: #173334;
   color: #febd2f;
-  border: 0.01rem solid #febd2f;
+  border-color: #febd2f;
 }
 
-@media only screen and (min-width: 600px) {
-  .admin-header,
-  .orders-row,
-  .messages-received {
-    margin: 20px;
-  }
-
-  .admin-header,
-  .orders-row {
-    padding: 20px;
+@media (max-width: 1024px) {
+  .dashboard-stats {
     grid-template-columns: repeat(2, 1fr);
-    grid-gap: 15px;
   }
-}
-
-@media only screen and (min-width: 800px) {
-  .admin-header,
-  .orders-row {
-    padding: 30px;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 25px;
-  }
-
-  .admin-button {
-    padding: 8px 100px;
+  .dashboard-grid {
+    grid-template-columns: 1fr;
   }
 }

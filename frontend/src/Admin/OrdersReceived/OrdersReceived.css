@@ -1,6 +1,26 @@
 .orders-ordered {
   margin: 40px 80px;
 }
+.orders-search-bar {
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.orders-search-bar input {
+  width: min(480px, 100%);
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #b6c6dc;
+  font-size: 14px;
+}
+.orders-search-bar span {
+  font-size: 13px;
+  color: #4f5f74;
+  font-weight: 600;
+}
 .order-id {
   display: block;
 }
@@ -10,19 +30,18 @@
   border: 1px solid #133334;
 }
 .first-row {
-  padding: 12px 0;
-  text-align: center;
+  padding: 12px 18px;
+  text-align: left;
   border-bottom: 1px solid#000;
-  letter-spacing: 2px;
+  letter-spacing: 0.6px;
   font-family: "Courier New", Courier, monospace;
   font-weight: 600;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding-left: 18px;
-  padding-right: 18px;
-  flex-wrap: wrap;
+}
+.first-row p {
+  margin: 0 0 6px;
+}
+.first-row p:last-child {
+  margin-bottom: 0;
 }
 .second-row {
   padding: 14px;
@@ -170,7 +189,6 @@
     width: 100%;
   }
   .first-row {
-    justify-content: center;
-    text-align: center;
+    text-align: left;
   }
 }

@@ -1,5 +1,5 @@
 import { Header1 } from "../Admin";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./OrdersReceived.css";
 import { useAuth } from "../../context/AuthContext";
@@ -8,6 +8,7 @@ export default function OrdersReceived({ title }) {
   const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
   const { user } = useAuth();
   const [orders, setOrders] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(true);
   const NEXT_STATUS = {
     "Order Placed": "Order Confirmed",
@@ -26,6 +27,32 @@ export default function OrdersReceived({ title }) {
     String(status || "")
       .toLowerCase()
       .replace(/\s+/g, "-");
+  const formatOrderDateTime = (dateValue) =>
+    new Date(dateValue).toLocaleString("en-IN", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
+  const filteredOrders = useMemo(() => {
+    const query = String(searchValue || "").trim().toLowerCase();
+    if (!query) return orders;
+    return orders.filter((order) => {
+      const matchesOrderId = String(order?._id || "")
+        .toLowerCase()
+        .includes(query);
+      const matchesProductId = (order?.orderItems || []).some((item) =>
+        String(item?.productId || "")
+          .toLowerCase()
+          .includes(query)
+      );
+      return matchesOrderId || matchesProductId;
+    });
+  }, [orders, searchValue]);
 
   const fetchOrders = async () => {
     try {
@@ -74,16 +101,34 @@ export default function OrdersReceived({ title }) {
     <>
       <Header1 />
       <div className="orders-ordered">
+        <div className="orders-search-bar">
+          <input
+            type="text"
+            value={searchValue}
+            onChange={(event) => setSearchValue(event.target.value)}
+            placeholder="Search by Order ID or Product ID"
+          />
+          <span>
+            Showing {filteredOrders.length} of {orders.length}
+          </span>
+        </div>
         {loading ? (
           <h1>Loading orders...</h1>
-        ) : orders.length === 0 ? (
+        ) : filteredOrders.length === 0 ? (
           <h1>No orders received yet.</h1>
         ) : (
-          orders.map((order) => (
+          filteredOrders.map((order) => (
           <div key={order._id} className="main-row">
             <div className="first-row">
-              <span>Order Id: {order._id}</span>
-              <span>Customer Email: {order?.customer?.customerEmail || "N/A"}</span>
+              <p>
+                <strong>Order Id:</strong> {order._id}
+              </p>
+              <p>
+                <strong>Order Date & Time:</strong> {formatOrderDateTime(order.createdAt)}
+              </p>
+              <p>
+                <strong>Customer Email:</strong> {order?.customer?.customerEmail || "N/A"}
+              </p>
             </div>
             <div className="second-row">
                 <div className="customer-details">
