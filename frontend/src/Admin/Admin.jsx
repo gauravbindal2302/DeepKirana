@@ -80,6 +80,7 @@ import { Link } from "react-router-dom";
 import "./Admin.css";
 import Account from "./Account/Account";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
   return (
@@ -94,8 +95,12 @@ const Header = () => {
 };
 
 const Header1 = () => {
+  const { logout } = useAuth();
   const navigate = useNavigate();
-  const handleSignOut = () => navigate("/admin");
+  const handleSignOut = () => {
+    logout();
+    navigate("/login?role=admin");
+  };
   return (
     <div className="header-1">
       <div className="logo">

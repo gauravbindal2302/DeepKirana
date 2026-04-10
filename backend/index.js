@@ -283,6 +283,218 @@ function escapeHtml(s) {
     .replace(/"/g, "&quot;");
 }
 
+const normalizeMobileNumber = (value) => String(value || "").replace(/\D/g, "").slice(-10);
+
+const authUserSchema = new mongoose.Schema(
+  {
+    name: { type: String, default: "" },
+    mobileNumber: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ["customer", "admin"], required: true },
+  },
+  { timestamps: true }
+);
+const AuthUser = mongoose.model("AuthUser", authUserSchema);
+const otpStore = new Map();
+
+const createToken = (user) =>
+  jwt.sign(
+    { id: user._id, role: user.role, mobileNumber: user.mobileNumber },
+    SECRET_KEY,
+    { expiresIn: "7d" }
+  );
+
+server.post("/auth/register", async (req, res) => {
+  try {
+    const { name, mobileNumber, password } = req.body;
+    const normalizedMobileNumber = normalizeMobileNumber(mobileNumber);
+    if (!/^\d{10}$/.test(normalizedMobileNumber)) {
+      return res.status(400).json({ error: "Please enter a valid 10-digit mobile number." });
+    }
+    if (!password || String(password).length < 4) {
+      return res.status(400).json({ error: "Password must be at least 4 characters." });
+    }
+
+    const existingUser = await AuthUser.findOne({ mobileNumber: normalizedMobileNumber });
+    if (existingUser) {
+      return res.status(409).json({ error: "Mobile number already registered. Please login." });
+    }
+
+    const hashedPassword = await bcrypt.hash(String(password), 10);
+    const user = await AuthUser.create({
+      name: String(name || "").trim(),
+      mobileNumber: normalizedMobileNumber,
+      password: hashedPassword,
+      role: "customer",
+    });
+
+    const token = createToken(user);
+    return res.status(201).json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        mobileNumber: user.mobileNumber,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Error registering customer:", error);
+    return res.status(500).json({ error: "Failed to register user." });
+  }
+});
+
+server.post("/auth/request-otp", async (req, res) => {
+  try {
+    const { mobileNumber, role } = req.body;
+    const normalizedMobileNumber = normalizeMobileNumber(mobileNumber);
+    const selectedRole = String(role || "customer").toLowerCase();
+
+    if (!["customer", "admin"].includes(selectedRole)) {
+      return res.status(400).json({ error: "Invalid role selected." });
+    }
+    if (!/^\d{10}$/.test(normalizedMobileNumber)) {
+      return res.status(400).json({ error: "Please enter a valid 10-digit mobile number." });
+    }
+
+    if (selectedRole === "admin") {
+      const adminUser = await AuthUser.findOne({
+        mobileNumber: normalizedMobileNumber,
+        role: "admin",
+      });
+      if (!adminUser) {
+        return res.status(404).json({ error: "Admin account not found for this mobile number." });
+      }
+    }
+
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    otpStore.set(`${selectedRole}:${normalizedMobileNumber}`, {
+      otp,
+      expiresAt: Date.now() + 5 * 60 * 1000,
+    });
+
+    // Replace this with real SMS provider integration.
+    return res.status(200).json({
+      message: "OTP sent successfully.",
+      devOtp: otp,
+    });
+  } catch (error) {
+    console.error("Error requesting OTP:", error);
+    return res.status(500).json({ error: "Failed to send OTP." });
+  }
+});
+
+server.post("/auth/verify-otp", async (req, res) => {
+  try {
+    const { mobileNumber, role, otp, name } = req.body;
+    const normalizedMobileNumber = normalizeMobileNumber(mobileNumber);
+    const selectedRole = String(role || "customer").toLowerCase();
+    const otpCode = String(otp || "").trim();
+
+    if (!["customer", "admin"].includes(selectedRole)) {
+      return res.status(400).json({ error: "Invalid role selected." });
+    }
+    if (!/^\d{10}$/.test(normalizedMobileNumber)) {
+      return res.status(400).json({ error: "Please enter a valid 10-digit mobile number." });
+    }
+    if (!/^\d{6}$/.test(otpCode)) {
+      return res.status(400).json({ error: "Please enter a valid 6-digit OTP." });
+    }
+
+    const key = `${selectedRole}:${normalizedMobileNumber}`;
+    const storedOtp = otpStore.get(key);
+    if (!storedOtp) {
+      return res.status(400).json({ error: "OTP not found. Please request OTP again." });
+    }
+    if (storedOtp.expiresAt < Date.now()) {
+      otpStore.delete(key);
+      return res.status(400).json({ error: "OTP expired. Please request a new OTP." });
+    }
+    if (storedOtp.otp !== otpCode) {
+      return res.status(401).json({ error: "Invalid OTP." });
+    }
+    otpStore.delete(key);
+
+    let user = await AuthUser.findOne({
+      mobileNumber: normalizedMobileNumber,
+      role: selectedRole,
+    });
+
+    if (!user && selectedRole === "customer") {
+      user = await AuthUser.create({
+        name: String(name || "").trim() || "Customer",
+        mobileNumber: normalizedMobileNumber,
+        password: "__OTP_ONLY__",
+        role: "customer",
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found for selected role." });
+    }
+
+    if (!user.name && selectedRole === "customer" && String(name || "").trim()) {
+      user.name = String(name).trim();
+      await user.save();
+    }
+
+    const token = createToken(user);
+    return res.status(200).json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        mobileNumber: user.mobileNumber,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    return res.status(500).json({ error: "Failed to verify OTP." });
+  }
+});
+
+server.post("/auth/login", async (req, res) => {
+  try {
+    const { mobileNumber, password, role } = req.body;
+    const normalizedMobileNumber = normalizeMobileNumber(mobileNumber);
+    const loginRole = String(role || "customer").toLowerCase();
+    if (!["customer", "admin"].includes(loginRole)) {
+      return res.status(400).json({ error: "Invalid role selected." });
+    }
+    if (!/^\d{10}$/.test(normalizedMobileNumber)) {
+      return res.status(400).json({ error: "Please enter a valid 10-digit mobile number." });
+    }
+
+    const user = await AuthUser.findOne({
+      mobileNumber: normalizedMobileNumber,
+      role: loginRole,
+    });
+    if (!user) {
+      return res.status(404).json({ error: "User not found for selected role." });
+    }
+
+    const isPasswordValid = await bcrypt.compare(String(password || ""), user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid password." });
+    }
+
+    const token = createToken(user);
+    return res.status(200).json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        mobileNumber: user.mobileNumber,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Error logging in:", error);
+    return res.status(500).json({ error: "Failed to login." });
+  }
+});
+
 /*
 //Admin schema and model
 const adminSchema = new mongoose.Schema({

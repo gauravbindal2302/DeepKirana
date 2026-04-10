@@ -8,7 +8,6 @@ import Contact from "./components/Contact/Contact";
 import Cart from "./components/Cart/Cart";
 import OrderConfirmation from "./components/OrderConfirmation/OrderConfirmation";
 import ProductDetails from "./components/Products/ProductDetails/ProductDetails";
-import { Admin } from "./Admin/Admin";
 import Dashboard from "./Admin/Dashboard/Dashboard";
 import Add from "./Admin/Add/Add";
 import View from "./Admin/View/View";
@@ -16,6 +15,9 @@ import Update from "./Admin/Update/Update";
 import Delete from "./Admin/Delete/Delete";
 import OrderedOrders from "./Admin/OrdersReceived/OrdersReceived";
 import MessagesReceived from "./Admin/MessagesReceived/MessagesReceived";
+import Account from "./Admin/Account/Account";
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import CustomerAccount from "./components/Account/CustomerAccount";
 
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -36,7 +38,8 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Home title="Deep Store" />} />
+        <Route path="/" element={<Account title="Deep Store - Login" />} />
+        <Route path="/home" element={<Home title="Deep Store" />} />
         <Route
           path="/products"
           element={<Products title="Deep Store - Products" />}
@@ -55,34 +58,71 @@ export default function App() {
           path="/order-confirmation/:orderId"
           element={<OrderConfirmation title="Deep Store - Order Confirmation" />}
         />
-        <Route path="/admin" element={<Admin title="Deep Store - Admin" />} />
+        <Route path="/admin" element={<Account title="Deep Store - Login" />} />
+        <Route path="/login" element={<Account title="Deep Store - Login" />} />
+        <Route
+          path="/account"
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <CustomerAccount />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/dashboard"
-          element={<Dashboard title="Deep Store - Admin | Dashboard" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <Dashboard title="Deep Store - Admin | Dashboard" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/add"
-          element={<Add title="Deep Store - Admin | Add" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <Add title="Deep Store - Admin | Add" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/view"
-          element={<View title="Deep Store - Admin | View" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <View title="Deep Store - Admin | View" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/update"
-          element={<Update title="Deep Store - Admin | Update" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <Update title="Deep Store - Admin | Update" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/delete"
-          element={<Delete title="Deep Store - Admin | Delete" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <Delete title="Deep Store - Admin | Delete" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/ordersReceived"
-          element={<OrderedOrders title="Deep Store - Admin | Orders" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <OrderedOrders title="Deep Store - Admin | Orders" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/messagesReceived"
-          element={<MessagesReceived title="Deep Store - Admin | Messages" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <MessagesReceived title="Deep Store - Admin | Messages" />
+            </ProtectedRoute>
+          }
         />
       </Routes>
       {isScrolled && (
@@ -118,7 +158,6 @@ import Contact from "./components/Contact/Contact";
 import Cart from "./components/Cart/Cart";
 import OrderConfirmation from "./components/OrderConfirmation/OrderConfirmation";
 import ProductDetails from "./components/Products/ProductDetails/ProductDetails";
-import { Admin } from "./Admin/Admin";
 import Dashboard from "./Admin/Dashboard/Dashboard";
 import Add from "./Admin/Add/Add";
 import View from "./Admin/View/View";
@@ -126,6 +165,9 @@ import Update from "./Admin/Update/Update";
 import Delete from "./Admin/Delete/Delete";
 import OrderedOrders from "./Admin/OrdersReceived/OrdersReceived";
 import MessagesReceived from "./Admin/MessagesReceived/MessagesReceived";
+import Account from "./Admin/Account/Account";
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import CustomerAccount from "./components/Account/CustomerAccount";
 
 export default function App() {
   const whatsapp_number = process.env.REACT_APP_WHATSAPP_NUMBER;
@@ -147,7 +189,8 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Home title="Deep Store" />} />
+        <Route path="/" element={<Account title="Deep Store - Login" />} />
+        <Route path="/home" element={<Home title="Deep Store" />} />
         <Route
           path="/products"
           element={<Products title="Deep Store - Products" />}
@@ -166,34 +209,71 @@ export default function App() {
           path="/order-confirmation/:orderId"
           element={<OrderConfirmation title="Deep Store - Order Confirmation" />}
         />
-        <Route path="/admin" element={<Admin title="Deep Store - Admin" />} />
+        <Route path="/admin" element={<Account title="Deep Store - Login" />} />
+        <Route path="/login" element={<Account title="Deep Store - Login" />} />
+        <Route
+          path="/account"
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <CustomerAccount />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/dashboard"
-          element={<Dashboard title="Deep Store - Admin | Dashboard" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <Dashboard title="Deep Store - Admin | Dashboard" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/add"
-          element={<Add title="Deep Store - Admin | Add" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <Add title="Deep Store - Admin | Add" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/view"
-          element={<View title="Deep Store - Admin | View" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <View title="Deep Store - Admin | View" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/update"
-          element={<Update title="Deep Store - Admin | Update" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <Update title="Deep Store - Admin | Update" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/delete"
-          element={<Delete title="Deep Store - Admin | Delete" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <Delete title="Deep Store - Admin | Delete" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/ordersReceived"
-          element={<OrderedOrders title="Deep Store - Admin | Orders" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <OrderedOrders title="Deep Store - Admin | Orders" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/admin/dashboard/messagesReceived"
-          element={<MessagesReceived title="Deep Store - Admin | Messages" />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <MessagesReceived title="Deep Store - Admin | Messages" />
+            </ProtectedRoute>
+          }
         />
       </Routes>
       {isScrolled && (

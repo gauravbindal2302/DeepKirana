@@ -196,3 +196,47 @@ form a {
     width: 100%;
   }
 }
+
+.unified-auth {
+  height: auto;
+  padding: 24px 14px;
+}
+
+.auth-form-static {
+  position: static !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin-top: 10px;
+}
+
+.role-switch,
+.mode-switch {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.role-switch button,
+.mode-switch button {
+  border: 1px solid #d8d8d8;
+  background: #fff;
+  color: #555;
+  border-radius: 20px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.role-switch button.active,
+.mode-switch button.active {
+  background: #173334;
+  color: #fff;
+  border-color: #173334;
+}
+
+.auth-error {
+  color: #c72222;
+  font-size: 12px;
+  margin: 8px 0;
+}

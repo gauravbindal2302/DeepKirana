@@ -215,21 +215,60 @@ export default function Account() {
 }
 */
 
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./Account.css";
 import { Header } from "../Admin";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Account() {
+  const { requestOtp, verifyOtp } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
+  const initialRole = useMemo(
+    () =>
+      new URLSearchParams(location.search).get("role") === "admin"
+        ? "admin"
+        : "customer",
+    [location.search]
+  );
+  const [role, setRole] = useState(initialRole);
+  const [name, setName] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [devOtpPreview, setDevOtpPreview] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  useEffect(() => {
-    // Firebase auth is disabled temporarily.
-    // Keep user on admin landing page until manual navigation.
-  }, [navigate]);
+  const targetPath = role === "admin" ? "/admin/dashboard" : "/account";
 
-  const handleContinueToAdmin = () => {
-    navigate("/admin/dashboard");
+  const handleRequestOtp = async () => {
+    setErrorMessage("");
+    try {
+      setIsSubmitting(true);
+      const response = await requestOtp({ mobileNumber, role });
+      setDevOtpPreview(response?.devOtp || "");
+      setOtpSent(true);
+    } catch (error) {
+      setErrorMessage(error?.response?.data?.error || "Unable to continue right now.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleVerifyOtp = async (event) => {
+    event.preventDefault();
+    setErrorMessage("");
+    try {
+      setIsSubmitting(true);
+      await verifyOtp({ mobileNumber, role, otp, name });
+      navigate(targetPath);
+    } catch (error) {
+      setErrorMessage(error?.response?.data?.error || "Unable to continue right now.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -242,18 +281,90 @@ export default function Account() {
               <img alt="" src="Images/image-1.png" width="100%" />
             </div>
             <div className="col-12 col-lg-6">
-              <div className="form-container" style={{ textAlign: "center" }}>
-                <h3 style={{ marginBottom: "14px" }}>Admin Access</h3>
-                <p style={{ marginBottom: "20px" }}>
-                  Firebase login is temporarily disabled.
-                </p>
-                <button
-                  className="google-signup-button"
-                  onClick={handleContinueToAdmin}
-                  style={{ display: "inline-flex", alignItems: "center" }}
-                >
-                  Continue to Dashboard
-                </button>
+              <div className="form-container unified-auth">
+                <h3 style={{ marginBottom: "10px" }}>Login via Mobile</h3>
+                <div className="role-switch">
+                  <button
+                    type="button"
+                    className={role === "customer" ? "active" : ""}
+                    onClick={() => {
+                      setRole("customer");
+                      setOtp("");
+                      setOtpSent(false);
+                      setDevOtpPreview("");
+                      setErrorMessage("");
+                    }}
+                  >
+                    Customer
+                  </button>
+                  <button
+                    type="button"
+                    className={role === "admin" ? "active" : ""}
+                    onClick={() => {
+                      setRole("admin");
+                      setOtp("");
+                      setOtpSent(false);
+                      setDevOtpPreview("");
+                      setErrorMessage("");
+                    }}
+                  >
+                    Admin
+                  </button>
+                </div>
+                <form className="auth-form-static" onSubmit={handleVerifyOtp}>
+                  {role === "customer" ? (
+                    <input
+                      type="text"
+                      placeholder="Your Name (for first login)"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  ) : null}
+                  <input
+                    type="tel"
+                    placeholder="10-digit Mobile Number"
+                    value={mobileNumber}
+                    onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                    required
+                  />
+                  {otpSent ? (
+                    <input
+                      type="text"
+                      placeholder="Enter 6-digit OTP"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      required
+                    />
+                  ) : null}
+                  {errorMessage ? <p className="auth-error">{errorMessage}</p> : null}
+                  {!otpSent ? (
+                    <button
+                      type="button"
+                      className="btn"
+                      disabled={isSubmitting || mobileNumber.length !== 10}
+                      onClick={handleRequestOtp}
+                    >
+                      {isSubmitting ? "Sending OTP..." : "Send OTP"}
+                    </button>
+                  ) : (
+                    <>
+                      {devOtpPreview ? (
+                        <p className="auth-error" style={{ color: "#1f6a1f" }}>
+                          Dev OTP: {devOtpPreview}
+                        </p>
+                      ) : null}
+                      <button
+                        type="submit"
+                        className="btn"
+                        disabled={isSubmitting || otp.length !== 6}
+                      >
+                        {isSubmitting
+                          ? "Verifying..."
+                          : `Verify OTP and Login as ${role === "admin" ? "Admin" : "Customer"}`}
+                      </button>
+                    </>
+                  )}
+                </form>
               </div>
             </div>
           </div>
