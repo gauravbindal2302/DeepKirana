@@ -233,7 +233,7 @@ export default function Account() {
         : "customer",
     [location.pathname, location.search]
   );
-  const role = entryRole;
+  const [role, setRole] = useState(entryRole);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
@@ -293,6 +293,29 @@ export default function Account() {
               <div className="form-container unified-auth">
                 <p className="auth-title">Sign In</p>
                 <h2>{role === "admin" ? "Admin login" : "Customer login"}</h2>
+                <div className={`role-slider ${role === "admin" ? "admin" : "customer"}`}>
+                  <button
+                    type="button"
+                    className={`${role === "customer" ? "active" : ""} text-center`}
+                    onClick={() => {
+                      setRole("customer");
+                      setErrorMessage("");
+                    }}
+                  >
+                    Customer
+                  </button>
+                  <button
+                    type="button"
+                    className={`${role === "admin" ? "active" : ""} text-center`}
+                    onClick={() => {
+                      setRole("admin");
+                      setErrorMessage("");
+                    }}
+                  >
+                    Admin
+                  </button>
+                  <span className="role-slider-pill" />
+                </div>
                 <div className="auth-form-static">
                   <p className="auth-hint">
                     {role === "admin"

@@ -20,7 +20,6 @@ import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import PublicOnlyRoute from "./components/Auth/PublicOnlyRoute";
 import CustomerAccount from "./components/Account/CustomerAccount";
 import MyOrders from "./components/Orders/MyOrders";
-import MyOrders from "./components/Orders/MyOrders";
 
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -208,6 +207,7 @@ import About from "./components/About/About";
 import Contact from "./components/Contact/Contact";
 import Cart from "./components/Cart/Cart";
 import OrderConfirmation from "./components/OrderConfirmation/OrderConfirmation";
+import MyOrders from "./components/Orders/MyOrders";
 import ProductDetails from "./components/Products/ProductDetails/ProductDetails";
 import Dashboard from "./Admin/Dashboard/Dashboard";
 import Add from "./Admin/Add/Add";
@@ -302,6 +302,14 @@ export default function App() {
           element={
             <ProtectedRoute requiredRole="customer">
               <OrderConfirmation title="Deep Store - Order Confirmation" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <MyOrders title="Deep Store - My Orders" />
             </ProtectedRoute>
           }
         />

@@ -134,6 +134,61 @@
   color: #1f2937;
 }
 
+.role-slider {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  background: #edf2f7;
+  border: 1px solid #d7e0ea;
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.role-slider button {
+  position: relative;
+  z-index: 2;
+  border: none;
+  background: transparent;
+  color: #44556d;
+  font-weight: 700;
+  padding: 10px 34px;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: color 0.25s ease;
+  text-transform: lowercase;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.role-slider button.active {
+  color: #173334;
+}
+
+.role-slider-pill {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: calc(50% - 4px);
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(26, 40, 64, 0.14);
+  transition: transform 0.33s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.role-slider.customer .role-slider-pill {
+  transform: translateX(0);
+}
+
+.role-slider.admin .role-slider-pill {
+  transform: translateX(calc(100% + 4px));
+}
+
 .auth-form-static {
   margin-top: 14px;
 }
