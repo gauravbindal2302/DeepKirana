@@ -8,6 +8,7 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import nodemailer from "nodemailer";
 
 const server = express();
 
@@ -28,6 +29,17 @@ const STORE_PINCODE = String(process.env.STORE_PINCODE || "").replace(/\D/g, "")
 const STORE_LATITUDE = Number(process.env.STORE_LATITUDE || "28.6139");
 const STORE_LONGITUDE = Number(process.env.STORE_LONGITUDE || "77.209");
 const FREE_DELIVERY_RADIUS_KM = Number(process.env.FREE_DELIVERY_RADIUS_KM || "5");
+const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
+const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID;
+const WHATSAPP_TO_NUMBER = String(process.env.WHATSAPP_TO_NUMBER || "").replace(/\D/g, "");
+
+const ORDER_NOTIFY_EMAIL = process.env.ORDER_NOTIFY_EMAIL;
+const SMTP_HOST = process.env.SMTP_HOST;
+const SMTP_PORT = Number(process.env.SMTP_PORT || "587");
+const SMTP_SECURE = process.env.SMTP_SECURE === "true";
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const EMAIL_FROM = process.env.EMAIL_FROM || SMTP_USER;
 
 // Connect to the MongoDB database
 mongoose
@@ -131,6 +143,145 @@ const getStoreCoordinates = async () => {
 
   return null;
 };
+
+const buildWhatsAppOrderMessage = (order) => {
+  const orderDate = new Date(order.createdAt || Date.now()).toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  const customer = order.customer || {};
+  const itemLines = (order.orderItems || [])
+    .map(
+      (item, idx) =>
+        `${idx + 1}. ${item.productName} | ${item.productSize} | Qty ${item.productQuantity} | Rs ${Number(
+          item.productPrice || 0
+        ).toFixed(2)}`
+    )
+    .join("\n");
+
+  return `New Order Received
+
+Order ID: ${order._id}
+Date & Time: ${orderDate}
+
+Customer:
+Name: ${customer.customerName || "-"}
+Mobile: ${customer.mobileNumber || "-"}
+Address: ${customer.houseNumber || "-"}, ${customer.streetName || "-"}, ${
+    customer.landmark || "-"
+  }, ${customer.city || "-"}, ${customer.state || "-"} - ${customer.pinCode || "-"}
+
+Items:
+${itemLines}
+
+Payment: ${order.paymentMethod || "-"}
+Subtotal: Rs ${Number(order.subtotal || 0).toFixed(2)}
+Delivery: Rs ${Number(order.deliveryCharge || 0).toFixed(2)}
+Total: Rs ${Number(order.totalAmount || 0).toFixed(2)}
+Order Status: ${order.orderStatus || "Pending"}`;
+};
+
+const sendOrderToWhatsApp = async (order) => {
+  if (!WHATSAPP_ACCESS_TOKEN || !WHATSAPP_PHONE_NUMBER_ID || !WHATSAPP_TO_NUMBER) {
+    return;
+  }
+
+  const payload = {
+    messaging_product: "whatsapp",
+    to: WHATSAPP_TO_NUMBER,
+    type: "text",
+    text: {
+      body: buildWhatsAppOrderMessage(order),
+    },
+  };
+
+  const response = await fetch(
+    `https://graph.facebook.com/v20.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`WhatsApp API error: ${response.status} ${errorBody}`);
+  }
+};
+
+const sendOrderEmail = async (order) => {
+  if (!ORDER_NOTIFY_EMAIL || !SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
+    return;
+  }
+
+  const transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_SECURE,
+    auth: {
+      user: SMTP_USER,
+      pass: SMTP_PASS,
+    },
+  });
+
+  const plainBody = buildWhatsAppOrderMessage(order);
+  const subject = `New order #${order._id} — DeepStore`;
+
+  const itemRows = (order.orderItems || [])
+    .map(
+      (item, idx) =>
+        `<tr><td>${idx + 1}</td><td>${escapeHtml(item.productName)}</td><td>${escapeHtml(
+          String(item.productSize || "")
+        )}</td><td>${item.productQuantity}</td><td>₹${Number(item.productPrice || 0).toFixed(2)}</td></tr>`
+    )
+    .join("");
+
+  const customer = order.customer || {};
+  const htmlBody = `
+    <h2>New order received</h2>
+    <p><strong>Order ID:</strong> ${order._id}</p>
+    <p><strong>Payment:</strong> ${escapeHtml(String(order.paymentMethod || ""))}</p>
+    <p><strong>Subtotal:</strong> ₹${Number(order.subtotal || 0).toFixed(2)} &nbsp;
+    <strong>Delivery:</strong> ₹${Number(order.deliveryCharge || 0).toFixed(2)} &nbsp;
+    <strong>Total:</strong> ₹${Number(order.totalAmount || 0).toFixed(2)}</p>
+    <h3>Customer</h3>
+    <p>${escapeHtml(customer.customerName || "")} — ${escapeHtml(customer.mobileNumber || "")}<br/>
+    ${escapeHtml(customer.houseNumber || "")}, ${escapeHtml(customer.streetName || "")}, ${escapeHtml(
+    customer.landmark || ""
+  )}<br/>
+    ${escapeHtml(customer.city || "")}, ${escapeHtml(customer.state || "")} — ${escapeHtml(
+    customer.pinCode || ""
+  )}</p>
+    <h3>Items</h3>
+    <table border="1" cellpadding="6" cellspacing="0"><thead><tr><th>#</th><th>Product</th><th>Size</th><th>Qty</th><th>Price</th></tr></thead><tbody>${itemRows}</tbody></table>
+    <p><small>Status: ${escapeHtml(String(order.orderStatus || "Pending"))}</small></p>
+  `;
+
+  await transporter.sendMail({
+    from: EMAIL_FROM,
+    to: ORDER_NOTIFY_EMAIL,
+    subject,
+    text: plainBody,
+    html: htmlBody,
+  });
+};
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 /*
 //Admin schema and model
@@ -586,6 +737,16 @@ server.post("/orders", async (req, res) => {
     });
 
     await newOrder.save();
+    try {
+      await sendOrderToWhatsApp(newOrder);
+    } catch (whatsAppError) {
+      console.error("Error sending WhatsApp order message:", whatsAppError);
+    }
+    try {
+      await sendOrderEmail(newOrder);
+    } catch (emailError) {
+      console.error("Error sending order email:", emailError);
+    }
     return res.status(201).json({ message: "Order placed", order: newOrder });
   } catch (error) {
     console.error("Error creating order:", error);

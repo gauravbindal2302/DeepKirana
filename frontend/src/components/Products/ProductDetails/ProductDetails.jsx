@@ -17,7 +17,6 @@ export default function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [categoryName, setCategoryName] = useState("");
   const [selectedOption, setSelectedOption] = useState("1000");
-  const [packsText, setPacksText] = useState("");
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -46,7 +45,7 @@ export default function ProductDetails() {
     };
 
     fetchProduct();
-  }, [id]);
+  }, [id, SERVER_URL]);
 
   const getPackValues = (isCustomizable, selectedWeight) => {
     const basePrice = Number(product?.productPrice) || 0;
@@ -59,38 +58,6 @@ export default function ProductDetails() {
       packMrp: Number(((baseMrp * selectedWeight) / 1000).toFixed(2)),
     };
   };
-
-  useEffect(() => {
-    if (!product) return;
-    const isCustomizable =
-      String(product.productSize).toLowerCase() === "customizable";
-    if (!isCustomizable) {
-      setPacksText("");
-      return;
-    }
-    if (!selectedOption) {
-      setPacksText("");
-      return;
-    }
-    const selectedWeight = Number(selectedOption);
-    const selectedPackQuantityInCart = items.reduce(
-      (total, item) =>
-        item.id === product._id && item.weight === selectedWeight
-          ? total + item.quantity
-          : total,
-      0
-    );
-    const previewQty = Math.max(selectedPackQuantityInCart, 1);
-    const { packPrice } = getPackValues(true, selectedWeight);
-    const totalCost = packPrice * previewQty;
-    const displayOption =
-      selectedWeight >= 1000
-        ? `${selectedWeight / 1000} kg`
-        : `${selectedWeight} gm`;
-    setPacksText(
-      `${previewQty} pack(s) of ${displayOption} = ₹${totalCost.toFixed(2)}`
-    );
-  }, [selectedOption, product, items]);
 
   const handleOptionChange = (weight) => {
     setSelectedOption(String(weight));
@@ -301,7 +268,6 @@ export default function ProductDetails() {
                       })}
                     </div>
                   </div>
-                  <p className="pack-preview">{packsText}</p>
                   {totalCustomizableQuantityInCart > 0 ? (
                     <p className="cart-note">
                       {totalCustomizableQuantityInCart} customizable pack(s) already in cart
