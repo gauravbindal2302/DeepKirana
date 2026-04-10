@@ -1037,7 +1037,7 @@ const orderSchema = new mongoose.Schema(
       default: "Order Placed",
     },
     cancellation: {
-      cancelledByRole: { type: String, enum: ["user", "admin"], default: null },
+      cancelledByRole: { type: String, enum: ["", "user", "admin"], default: "" },
       cancelledByName: { type: String, default: "" },
       cancellationReason: { type: String, default: "" },
       cancelledAt: { type: Date, default: null },
@@ -1105,17 +1105,22 @@ server.post("/orders", async (req, res) => {
     });
 
     await newOrder.save();
-    await CustomerProfile.findOneAndUpdate(
-      { userId: customerUserId },
-      {
-        $set: {
-          email: customerEmail,
-          name: String(customer.customerName || "").trim(),
+    try {
+      await CustomerProfile.findOneAndUpdate(
+        { userId: customerUserId },
+        {
+          $set: {
+            email: customerEmail,
+            name: String(customer.customerName || "").trim(),
+          },
+          $addToSet: { orders: newOrder._id },
         },
-        $addToSet: { orders: newOrder._id },
-      },
-      { upsert: true, new: true }
-    );
+        { upsert: true, new: true }
+      );
+    } catch (profileError) {
+      // Do not fail order placement if profile link/update fails.
+      console.error("Error linking order to customer profile:", profileError);
+    }
     try {
       await sendOrderToWhatsApp(newOrder);
     } catch (whatsAppError) {
@@ -1129,7 +1134,10 @@ server.post("/orders", async (req, res) => {
     return res.status(201).json({ message: "Order placed", order: newOrder });
   } catch (error) {
     console.error("Error creating order:", error);
-    return res.status(500).json({ error: "Failed to create order" });
+    return res.status(500).json({
+      error: "Failed to create order",
+      details: error?.message || "Unknown server error",
+    });
   }
 });
 
