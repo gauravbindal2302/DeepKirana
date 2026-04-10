@@ -192,7 +192,7 @@ export default function MyOrders({ title }) {
                     </p>
                   </div>
 
-                  {order.orderStatus !== "Cancelled" ? (
+                  {!["Cancelled", "Delivered"].includes(order.orderStatus) ? (
                     <div className="order-timeline">
                       {ORDER_FLOW.map((status, idx) => (
                         <div
@@ -221,7 +221,6 @@ export default function MyOrders({ title }) {
                         <thead>
                           <tr>
                             <th>SNo.</th>
-                            <th>Product Id</th>
                             <th>Product Name</th>
                             <th>Product Size</th>
                             <th>Product Quantity</th>
@@ -237,7 +236,6 @@ export default function MyOrders({ title }) {
                             return (
                               <tr key={`${order._id}-${idx}`}>
                                 <td>{idx + 1}</td>
-                                <td>{item.productId}</td>
                                 <td>{item.productName}</td>
                                 <td>{item.productSize}</td>
                                 <td>{quantity}</td>
