@@ -222,50 +222,47 @@ import { Header } from "../Admin";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Account() {
-  const { requestOtp, verifyOtp } = useAuth();
+  const { loginWithGoogle } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const initialRole = useMemo(
+  const entryRole = useMemo(
     () =>
+      location.pathname === "/admin" ||
       new URLSearchParams(location.search).get("role") === "admin"
         ? "admin"
         : "customer",
-    [location.search]
+    [location.pathname, location.search]
   );
-  const [role, setRole] = useState(initialRole);
-  const [name, setName] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [devOtpPreview, setDevOtpPreview] = useState("");
+  const role = entryRole;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [openFaqIndex, setOpenFaqIndex] = useState(0);
+
+  const faqItems = [
+    {
+      q: "How fast is delivery?",
+      a: "Most daily orders are delivered in the same day depending on your location and slot availability.",
+    },
+    {
+      q: "Can I save my cart for later?",
+      a: "Yes, once signed in your cart stays linked to your account so you can continue shopping anytime.",
+    },
+    {
+      q: "Are products quality checked?",
+      a: "Yes. We pick and pack with freshness checks before dispatch.",
+    },
+  ];
 
   const targetPath = role === "admin" ? "/admin/dashboard" : "/account";
 
-  const handleRequestOtp = async () => {
+  const handleGoogleLogin = async () => {
     setErrorMessage("");
     try {
       setIsSubmitting(true);
-      const response = await requestOtp({ mobileNumber, role });
-      setDevOtpPreview(response?.devOtp || "");
-      setOtpSent(true);
-    } catch (error) {
-      setErrorMessage(error?.response?.data?.error || "Unable to continue right now.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleVerifyOtp = async (event) => {
-    event.preventDefault();
-    setErrorMessage("");
-    try {
-      setIsSubmitting(true);
-      await verifyOtp({ mobileNumber, role, otp, name });
+      await loginWithGoogle({ role });
       navigate(targetPath);
     } catch (error) {
-      setErrorMessage(error?.response?.data?.error || "Unable to continue right now.");
+      setErrorMessage(error?.message || "Unable to continue right now.");
     } finally {
       setIsSubmitting(false);
     }
@@ -275,99 +272,115 @@ export default function Account() {
     <>
       <Header />
       <div className="account-page">
-        <div className="container">
-          <div className="row account-row">
-            <div className="col-12 col-lg-6">
-              <img alt="" src="Images/image-1.png" width="100%" />
+        <div className="auth-shell">
+          <div className="auth-layout">
+            <div className="auth-brand-panel">
+              <div className="floating-grocery-icons" aria-hidden="true">
+                <span className="g-icon g-icon-1">🍎</span>
+                <span className="g-icon g-icon-2">🥦</span>
+                <span className="g-icon g-icon-3">🥛</span>
+                <span className="g-icon g-icon-4">🍞</span>
+              </div>
+              <p className="auth-kicker">Welcome to Deep Store</p>
+              <h1>Fresh groceries delivered to your doorstep.</h1>
+              <p className="auth-subtext">
+                Sign in to continue shopping, save your cart, and manage your account seamlessly.
+              </p>
+              <div className="auth-micro-proof">Trusted by daily shoppers for quality and speed.</div>
             </div>
-            <div className="col-12 col-lg-6">
+
+            <div className="auth-card">
               <div className="form-container unified-auth">
-                <h3 style={{ marginBottom: "10px" }}>Login via Mobile</h3>
-                <div className="role-switch">
+                <p className="auth-title">Sign In</p>
+                <h2>{role === "admin" ? "Admin login" : "Customer login"}</h2>
+                <div className="auth-form-static">
+                  <p className="auth-hint">
+                    {role === "admin"
+                      ? "Continue with your authorized admin Google account."
+                      : "Continue with your Google account to start shopping."}
+                  </p>
+                  {errorMessage ? <p className="auth-error">{errorMessage}</p> : null}
                   <button
                     type="button"
-                    className={role === "customer" ? "active" : ""}
-                    onClick={() => {
-                      setRole("customer");
-                      setOtp("");
-                      setOtpSent(false);
-                      setDevOtpPreview("");
-                      setErrorMessage("");
-                    }}
+                    className="btn auth-google-btn"
+                    disabled={isSubmitting}
+                    onClick={handleGoogleLogin}
                   >
-                    Customer
-                  </button>
-                  <button
-                    type="button"
-                    className={role === "admin" ? "active" : ""}
-                    onClick={() => {
-                      setRole("admin");
-                      setOtp("");
-                      setOtpSent(false);
-                      setDevOtpPreview("");
-                      setErrorMessage("");
-                    }}
-                  >
-                    Admin
+                    <i className="fab fa-google"></i>
+                    {isSubmitting
+                      ? "Signing in..."
+                      : `Continue with Google as ${role === "admin" ? "Admin" : "Customer"}`}
                   </button>
                 </div>
-                <form className="auth-form-static" onSubmit={handleVerifyOtp}>
-                  {role === "customer" ? (
-                    <input
-                      type="text"
-                      placeholder="Your Name (for first login)"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  ) : null}
-                  <input
-                    type="tel"
-                    placeholder="10-digit Mobile Number"
-                    value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
-                    required
-                  />
-                  {otpSent ? (
-                    <input
-                      type="text"
-                      placeholder="Enter 6-digit OTP"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                      required
-                    />
-                  ) : null}
-                  {errorMessage ? <p className="auth-error">{errorMessage}</p> : null}
-                  {!otpSent ? (
-                    <button
-                      type="button"
-                      className="btn"
-                      disabled={isSubmitting || mobileNumber.length !== 10}
-                      onClick={handleRequestOtp}
-                    >
-                      {isSubmitting ? "Sending OTP..." : "Send OTP"}
-                    </button>
-                  ) : (
-                    <>
-                      {devOtpPreview ? (
-                        <p className="auth-error" style={{ color: "#1f6a1f" }}>
-                          Dev OTP: {devOtpPreview}
-                        </p>
-                      ) : null}
-                      <button
-                        type="submit"
-                        className="btn"
-                        disabled={isSubmitting || otp.length !== 6}
-                      >
-                        {isSubmitting
-                          ? "Verifying..."
-                          : `Verify OTP and Login as ${role === "admin" ? "Admin" : "Customer"}`}
-                      </button>
-                    </>
-                  )}
-                </form>
               </div>
             </div>
           </div>
+
+          <section className="interactive-section">
+            <div className="section-head">
+              <h3>Explore Deep Store</h3>
+              <p>Scroll and discover what makes shopping smoother.</p>
+            </div>
+            <div className="explore-grid">
+              <article className="explore-card">
+                <span>🥬 Fresh Picks</span>
+                <h4>Farm-fresh essentials daily</h4>
+                <p>Curated vegetables, fruits, and staples with quality checks.</p>
+              </article>
+              <article className="explore-card">
+                <span>⚡ Fast Checkout</span>
+                <h4>Less clicks, faster ordering</h4>
+                <p>Smart account flow and personalized cart for quick repeat buys.</p>
+              </article>
+              <article className="explore-card">
+                <span>🎯 Smart Savings</span>
+                <h4>Offers where they matter</h4>
+                <p>Get better value with practical pricing across everyday categories.</p>
+              </article>
+            </div>
+          </section>
+
+          <section className="interactive-section staggered-bg">
+            <div className="section-head">
+              <h3>How It Works</h3>
+            </div>
+            <div className="steps-row">
+              <div className="step-item">
+                <strong>1</strong>
+                <p>Sign in with Google</p>
+              </div>
+              <div className="step-item">
+                <strong>2</strong>
+                <p>Add groceries to cart</p>
+              </div>
+              <div className="step-item">
+                <strong>3</strong>
+                <p>Place and track order</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="interactive-section">
+            <div className="section-head">
+              <h3>Quick FAQs</h3>
+            </div>
+            <div className="faq-list">
+              {faqItems.map((item, idx) => (
+                <button
+                  key={item.q}
+                  type="button"
+                  className={`faq-item ${openFaqIndex === idx ? "open" : ""}`}
+                  onClick={() => setOpenFaqIndex(openFaqIndex === idx ? -1 : idx)}
+                >
+                  <div className="faq-q">
+                    <span>{item.q}</span>
+                    <span>{openFaqIndex === idx ? "−" : "+"}</span>
+                  </div>
+                  {openFaqIndex === idx ? <p className="faq-a">{item.a}</p> : null}
+                </button>
+              ))}
+            </div>
+          </section>
         </div>
       </div>
     </>

@@ -34,14 +34,62 @@
   color: #4b8653;
   position: absolute;
   top: 37px;
-  right: 150px;
+  right: 130px;
   font-size: 1rem;
   font-weight: bold;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 .log-reg:hover,
-.go-to-dashboard:hover {
+.go-to-dashboard:hover,
+.admin-profile-icon-btn:hover {
   color: #c7b55d;
+}
+.admin-profile-menu {
+  position: absolute;
+  right: 60px;
+  top: 28px;
+}
+.admin-profile-icon-btn {
+  border: none;
+  background: transparent;
+  color: #f6f6f6;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+.admin-profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: 34px;
+  min-width: 170px;
+  background: #fff;
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  z-index: 50;
+}
+.admin-profile-dropdown p {
+  margin: 4px 8px 8px;
+  color: #222;
+  font-weight: 700;
+  font-size: 13px;
+}
+.admin-profile-dropdown a,
+.admin-profile-dropdown button {
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: #333;
+  text-decoration: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.admin-profile-dropdown a:hover,
+.admin-profile-dropdown button:hover {
+  background: #f4f4f4;
 }
 .admin-btn:hover {
   background-color: #173334;
@@ -88,8 +136,15 @@
   }
   .go-to-dashboard {
     top: 22px;
-    right: 30px;
+    right: 65px;
     font-size: 0.7rem;
+  }
+  .admin-profile-menu {
+    top: 18px;
+    right: 30px;
+  }
+  .admin-profile-icon-btn {
+    font-size: 1.3rem;
   }
 }
 @media only screen and (max-width: 1500px) {

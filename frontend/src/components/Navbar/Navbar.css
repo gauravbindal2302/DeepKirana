@@ -134,6 +134,55 @@ ul li a:hover {
 #noOfItems {
   color: #d4caca;
 }
+.profile-menu-wrapper {
+  position: relative;
+  margin-left: 12px;
+}
+.profile-icon-btn {
+  border: none;
+  background: transparent;
+  color: #d4caca;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+.profile-icon-btn:hover {
+  color: #febd2f;
+}
+.profile-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 34px;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+}
+.profile-menu-name {
+  margin: 4px 8px 8px;
+  color: #222;
+  font-size: 13px;
+  font-weight: 700;
+}
+.profile-menu-dropdown a,
+.profile-menu-dropdown button {
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: #333;
+  text-decoration: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.profile-menu-dropdown a:hover,
+.profile-menu-dropdown button:hover {
+  background: #f4f4f4;
+}
 #bag-icon {
   color: #d4caca;
   font-size: 1.4rem;
@@ -219,5 +268,8 @@ ul li a:hover {
     font-size: 1.4rem;
     cursor: pointer;
     width: 20px;
+  }
+  .profile-menu-wrapper {
+    margin-left: 6px;
   }
 }

@@ -3,16 +3,19 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./Navbar.css";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar(props) {
   const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
   const { itemCount } = useCart();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const [clicked, setClicked] = useState(false);
   const [color, setColor] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [products, setProducts] = useState([]);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -67,7 +70,7 @@ export default function Navbar(props) {
         <div className="container">
           <div className="navbar">
             <div className="logo">
-              <Link to="/">
+              <Link to="/home">
                 <span>Deep Store</span>
               </Link>
             </div>
@@ -101,7 +104,7 @@ export default function Navbar(props) {
             <nav>
               <ul className={clicked ? "menuItems active" : "menuItems"}>
                 <li className="link">
-                  <Link to="/">Home</Link>
+                  <Link to="/home">Home</Link>
                 </li>
                 <li className="link">
                   <Link to="/products">Products</Link>
@@ -117,6 +120,51 @@ export default function Navbar(props) {
             <Link to="/cart">
               <span id="noOfItems">Cart[{props.noOfItems ?? itemCount}]</span>
             </Link>
+            <div className="profile-menu-wrapper">
+              <button
+                type="button"
+                className="profile-icon-btn"
+                onClick={() => setShowProfileMenu((prev) => !prev)}
+              >
+                <i className="fas fa-user-circle"></i>
+              </button>
+              {showProfileMenu ? (
+                <div className="profile-menu-dropdown">
+                  {isAuthenticated ? (
+                    <>
+                      <p className="profile-menu-name">{user?.name || "User"}</p>
+                      {user?.role === "customer" ? (
+                        <>
+                          <Link to="/account" onClick={() => setShowProfileMenu(false)}>
+                            My Profile
+                          </Link>
+                          <Link to="/orders" onClick={() => setShowProfileMenu(false)}>
+                            My Orders
+                          </Link>
+                        </>
+                      ) : (
+                        <Link to="/admin/dashboard" onClick={() => setShowProfileMenu(false)}>
+                          Admin Dashboard
+                        </Link>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          logout();
+                          setShowProfileMenu(false);
+                        }}
+                      >
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <Link to="/login" onClick={() => setShowProfileMenu(false)}>
+                      Login
+                    </Link>
+                  )}
+                </div>
+              ) : null}
+            </div>
             <div className="menu-icon" onClick={handleClick}>
               <i
                 className={clicked && color ? "fas fa-times" : "fas fa-bars"}

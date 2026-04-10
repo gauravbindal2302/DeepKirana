@@ -17,7 +17,10 @@ import OrderedOrders from "./Admin/OrdersReceived/OrdersReceived";
 import MessagesReceived from "./Admin/MessagesReceived/MessagesReceived";
 import Account from "./Admin/Account/Account";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import PublicOnlyRoute from "./components/Auth/PublicOnlyRoute";
 import CustomerAccount from "./components/Account/CustomerAccount";
+import MyOrders from "./components/Orders/MyOrders";
+import MyOrders from "./components/Orders/MyOrders";
 
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -38,7 +41,14 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Account title="Deep Store - Login" />} />
+        <Route
+          path="/"
+          element={
+            <PublicOnlyRoute>
+              <Account title="Deep Store - Login" />
+            </PublicOnlyRoute>
+          }
+        />
         <Route path="/home" element={<Home title="Deep Store" />} />
         <Route
           path="/products"
@@ -53,13 +63,54 @@ export default function App() {
           path="/contact"
           element={<Contact title="Deep Store - Contact" />}
         />
-        <Route path="/cart" element={<Cart title="Deep Store - Cart" />} />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <Cart title="Deep Store - Cart" />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/order-confirmation/:orderId"
-          element={<OrderConfirmation title="Deep Store - Order Confirmation" />}
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <OrderConfirmation title="Deep Store - Order Confirmation" />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/admin" element={<Account title="Deep Store - Login" />} />
-        <Route path="/login" element={<Account title="Deep Store - Login" />} />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <MyOrders title="Deep Store - My Orders" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <MyOrders title="Deep Store - My Orders" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <PublicOnlyRoute>
+              <Account title="Deep Store - Login" />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicOnlyRoute>
+              <Account title="Deep Store - Login" />
+            </PublicOnlyRoute>
+          }
+        />
         <Route
           path="/account"
           element={
@@ -167,6 +218,7 @@ import OrderedOrders from "./Admin/OrdersReceived/OrdersReceived";
 import MessagesReceived from "./Admin/MessagesReceived/MessagesReceived";
 import Account from "./Admin/Account/Account";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import PublicOnlyRoute from "./components/Auth/PublicOnlyRoute";
 import CustomerAccount from "./components/Account/CustomerAccount";
 
 export default function App() {
@@ -189,28 +241,86 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Account title="Deep Store - Login" />} />
-        <Route path="/home" element={<Home title="Deep Store" />} />
+        <Route
+          path="/"
+          element={
+            <PublicOnlyRoute>
+              <Account title="Deep Store - Login" />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <Home title="Deep Store" />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/products"
-          element={<Products title="Deep Store - Products" />}
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <Products title="Deep Store - Products" />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/details/:id"
-          element={<ProductDetails title="Deep Store - Products" />}
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <ProductDetails title="Deep Store - Products" />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/about" element={<About title="Deep Store - About" />} />
+        <Route
+          path="/about"
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <About title="Deep Store - About" />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/contact"
-          element={<Contact title="Deep Store - Contact" />}
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <Contact title="Deep Store - Contact" />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/cart" element={<Cart title="Deep Store - Cart" />} />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <Cart title="Deep Store - Cart" />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/order-confirmation/:orderId"
-          element={<OrderConfirmation title="Deep Store - Order Confirmation" />}
+          element={
+            <ProtectedRoute requiredRole="customer">
+              <OrderConfirmation title="Deep Store - Order Confirmation" />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/admin" element={<Account title="Deep Store - Login" />} />
-        <Route path="/login" element={<Account title="Deep Store - Login" />} />
+        <Route
+          path="/admin"
+          element={
+            <PublicOnlyRoute>
+              <Account title="Deep Store - Login" />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicOnlyRoute>
+              <Account title="Deep Store - Login" />
+            </PublicOnlyRoute>
+          }
+        />
         <Route
           path="/account"
           element={

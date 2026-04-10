@@ -297,12 +297,40 @@ const authUserSchema = new mongoose.Schema(
 const AuthUser = mongoose.model("AuthUser", authUserSchema);
 const otpStore = new Map();
 
+const loginEventSchema = new mongoose.Schema(
+  {
+    userId: { type: String, default: "" },
+    email: { type: String, default: "", lowercase: true, trim: true },
+    role: { type: String, enum: ["customer", "admin"], required: true },
+    provider: { type: String, default: "google" },
+    source: { type: String, default: "web" },
+    userAgent: { type: String, default: "" },
+    ipAddress: { type: String, default: "" },
+  },
+  { timestamps: true }
+);
+const LoginEvent = mongoose.model("LoginEvent", loginEventSchema);
+
 const createToken = (user) =>
   jwt.sign(
     { id: user._id, role: user.role, mobileNumber: user.mobileNumber },
     SECRET_KEY,
     { expiresIn: "7d" }
   );
+
+const getAuthUserFromRequest = async (req) => {
+  const authorization = String(req.headers.authorization || "");
+  if (!authorization.startsWith("Bearer ")) {
+    throw new Error("UNAUTHORIZED");
+  }
+  const token = authorization.slice(7).trim();
+  const payload = jwt.verify(token, SECRET_KEY);
+  const user = await AuthUser.findById(payload.id);
+  if (!user) {
+    throw new Error("UNAUTHORIZED");
+  }
+  return user;
+};
 
 server.post("/auth/register", async (req, res) => {
   try {
@@ -451,6 +479,88 @@ server.post("/auth/verify-otp", async (req, res) => {
   } catch (error) {
     console.error("Error verifying OTP:", error);
     return res.status(500).json({ error: "Failed to verify OTP." });
+  }
+});
+
+server.get("/auth/me", async (req, res) => {
+  try {
+    const user = await getAuthUserFromRequest(req);
+    return res.status(200).json({
+      user: {
+        id: user._id,
+        name: user.name,
+        mobileNumber: user.mobileNumber,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    if (error?.name === "JsonWebTokenError" || error?.name === "TokenExpiredError") {
+      return res.status(401).json({ error: "Session expired. Please login again." });
+    }
+    if (error?.message === "UNAUTHORIZED") {
+      return res.status(401).json({ error: "Unauthorized." });
+    }
+    console.error("Error fetching profile:", error);
+    return res.status(500).json({ error: "Failed to fetch profile." });
+  }
+});
+
+server.patch("/auth/me", async (req, res) => {
+  try {
+    const user = await getAuthUserFromRequest(req);
+    const nextName = String(req.body?.name || "").trim();
+    if (!nextName) {
+      return res.status(400).json({ error: "Name is required." });
+    }
+    user.name = nextName;
+    await user.save();
+    return res.status(200).json({
+      user: {
+        id: user._id,
+        name: user.name,
+        mobileNumber: user.mobileNumber,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    if (error?.name === "JsonWebTokenError" || error?.name === "TokenExpiredError") {
+      return res.status(401).json({ error: "Session expired. Please login again." });
+    }
+    if (error?.message === "UNAUTHORIZED") {
+      return res.status(401).json({ error: "Unauthorized." });
+    }
+    console.error("Error updating profile:", error);
+    return res.status(500).json({ error: "Failed to update profile." });
+  }
+});
+
+server.post("/auth/login-event", async (req, res) => {
+  try {
+    const role = String(req.body?.role || "").toLowerCase();
+    if (!["customer", "admin"].includes(role)) {
+      return res.status(400).json({ error: "Invalid role for login event." });
+    }
+
+    const forwardedFor = String(req.headers["x-forwarded-for"] || "")
+      .split(",")[0]
+      .trim();
+    const ipAddress = forwardedFor || req.socket?.remoteAddress || "";
+    const userAgent = String(req.headers["user-agent"] || "");
+
+    await LoginEvent.create({
+      userId: String(req.body?.userId || "").trim(),
+      email: String(req.body?.email || "").trim().toLowerCase(),
+      role,
+      provider: String(req.body?.provider || "google"),
+      source: String(req.body?.source || "web"),
+      userAgent,
+      ipAddress,
+    });
+
+    return res.status(201).json({ message: "Login event recorded." });
+  } catch (error) {
+    console.error("Error recording login event:", error);
+    return res.status(500).json({ error: "Failed to record login event." });
   }
 });
 
@@ -900,6 +1010,8 @@ const orderSchema = new mongoose.Schema(
   {
     customer: {
       customerName: { type: String, required: true },
+      customerUserId: { type: String, default: "" },
+      customerEmail: { type: String, default: "" },
       mobileNumber: { type: String, required: true },
       houseNumber: { type: String, required: true },
       streetName: { type: String, required: true },
@@ -912,8 +1024,18 @@ const orderSchema = new mongoose.Schema(
     },
     orderItems: [orderItemSchema],
     paymentMethod: { type: String, required: true },
-    orderStatus: { type: String, default: "Pending" },
-    deliveryStatus: { type: String, default: "Not Sent" },
+    orderStatus: {
+      type: String,
+      enum: [
+        "Order Placed",
+        "Order Confirmed",
+        "Order Packed",
+        "Out for Delivery",
+        "Delivered",
+        "Cancelled",
+      ],
+      default: "Order Placed",
+    },
     subtotal: { type: Number, required: true },
     deliveryCharge: { type: Number, required: true },
     totalAmount: { type: Number, required: true },
@@ -922,6 +1044,26 @@ const orderSchema = new mongoose.Schema(
 );
 
 const Order = mongoose.model("Order", orderSchema);
+
+const customerProfileSchema = new mongoose.Schema(
+  {
+    userId: { type: String, required: true, unique: true },
+    email: { type: String, default: "", lowercase: true, trim: true },
+    name: { type: String, default: "" },
+    orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+  },
+  { timestamps: true }
+);
+
+const CustomerProfile = mongoose.model("CustomerProfile", customerProfileSchema);
+
+const ORDER_STATUS_FLOW = [
+  "Order Placed",
+  "Order Confirmed",
+  "Order Packed",
+  "Out for Delivery",
+  "Delivered",
+];
 
 // Route handler for creating a customer order
 server.post("/orders", async (req, res) => {
@@ -938,17 +1080,36 @@ server.post("/orders", async (req, res) => {
     if (!customer || !Array.isArray(orderItems) || orderItems.length === 0) {
       return res.status(400).json({ error: "Invalid order payload" });
     }
+    const customerUserId = String(customer.customerUserId || "").trim();
+    const customerEmail = String(customer.customerEmail || "").trim().toLowerCase();
+    if (!customerUserId || !customerEmail) {
+      return res
+        .status(400)
+        .json({ error: "Logged-in user details are required to place an order." });
+    }
 
     const newOrder = new Order({
       customer,
       orderItems,
       paymentMethod,
+      orderStatus: "Order Placed",
       subtotal,
       deliveryCharge,
       totalAmount,
     });
 
     await newOrder.save();
+    await CustomerProfile.findOneAndUpdate(
+      { userId: customerUserId },
+      {
+        $set: {
+          email: customerEmail,
+          name: String(customer.customerName || "").trim(),
+        },
+        $addToSet: { orders: newOrder._id },
+      },
+      { upsert: true, new: true }
+    );
     try {
       await sendOrderToWhatsApp(newOrder);
     } catch (whatsAppError) {
@@ -977,6 +1138,40 @@ server.get("/orders", async (req, res) => {
   }
 });
 
+// Route handler for fetching orders for a specific customer email
+server.get("/orders/customer", async (req, res) => {
+  try {
+    const customerEmail = String(req.query.email || "").trim().toLowerCase();
+    const customerUserId = String(req.query.userId || "").trim();
+    if (!customerEmail && !customerUserId) {
+      return res.status(400).json({ error: "Customer identity is required." });
+    }
+    let orders = [];
+    if (customerUserId) {
+      const profile = await CustomerProfile.findOne({ userId: customerUserId });
+      if (profile?.orders?.length) {
+        orders = await Order.find({ _id: { $in: profile.orders } }).sort({ createdAt: -1 });
+      }
+    }
+
+    if (!orders.length) {
+      const query = customerUserId
+        ? {
+            $or: [
+              { "customer.customerUserId": customerUserId },
+              ...(customerEmail ? [{ "customer.customerEmail": customerEmail }] : []),
+            ],
+          }
+        : { "customer.customerEmail": customerEmail };
+      orders = await Order.find(query).sort({ createdAt: -1 });
+    }
+    return res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching customer orders:", error);
+    return res.status(500).json({ error: "Failed to fetch customer orders." });
+  }
+});
+
 // Route handler for fetching single order details
 server.get("/orders/:id", async (req, res) => {
   try {
@@ -996,7 +1191,7 @@ server.patch("/orders/:id/confirm", async (req, res) => {
   try {
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { orderStatus: "Confirmed" },
+      { orderStatus: "Order Confirmed" },
       { new: true }
     );
     if (!order) {
@@ -1009,12 +1204,12 @@ server.patch("/orders/:id/confirm", async (req, res) => {
   }
 });
 
-// Route handler for marking order as sent
+// Route handler for marking order as out for delivery
 server.patch("/orders/:id/deliver", async (req, res) => {
   try {
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { deliveryStatus: "Sent" },
+      { orderStatus: "Out for Delivery" },
       { new: true }
     );
     if (!order) {
@@ -1024,6 +1219,53 @@ server.patch("/orders/:id/deliver", async (req, res) => {
   } catch (error) {
     console.error("Error updating delivery status:", error);
     return res.status(500).json({ error: "Failed to update delivery status" });
+  }
+});
+
+// Route handler for updating order status to any supported state
+server.patch("/orders/:id/status", async (req, res) => {
+  try {
+    const nextStatus = String(req.body.status || "");
+    if (
+      ![
+        "Order Placed",
+        "Order Confirmed",
+        "Order Packed",
+        "Out for Delivery",
+        "Delivered",
+        "Cancelled",
+      ].includes(nextStatus)
+    ) {
+      return res.status(400).json({ error: "Invalid order status." });
+    }
+
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    if (order.orderStatus === "Cancelled" || order.orderStatus === "Delivered") {
+      return res.status(400).json({ error: "Finalized orders cannot be updated." });
+    }
+
+    if (nextStatus === "Cancelled") {
+      order.orderStatus = "Cancelled";
+      await order.save();
+      return res.status(200).json(order);
+    }
+
+    const currentIdx = ORDER_STATUS_FLOW.indexOf(order.orderStatus);
+    const nextIdx = ORDER_STATUS_FLOW.indexOf(nextStatus);
+    if (nextIdx === -1 || currentIdx === -1 || nextIdx !== currentIdx + 1) {
+      return res.status(400).json({ error: "Status transition is not allowed." });
+    }
+
+    order.orderStatus = nextStatus;
+    await order.save();
+    return res.status(200).json(order);
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    return res.status(500).json({ error: "Failed to update order status." });
   }
 });
 

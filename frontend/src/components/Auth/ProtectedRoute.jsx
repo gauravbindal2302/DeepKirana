@@ -3,8 +3,12 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 export default function ProtectedRoute({ children, requiredRole }) {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, isHydratingSession, user } = useAuth();
   const location = useLocation();
+
+  if (isHydratingSession) {
+    return <p style={{ textAlign: "center", marginTop: "30px" }}>Checking session...</p>;
+  }
 
   if (!isAuthenticated) {
     const roleQuery = requiredRole ? `?role=${requiredRole}` : "";

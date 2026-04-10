@@ -5,11 +5,13 @@ import "./Cart.css";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Cart({ title }) {
   const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { items, addToCart, updateQuantity, removeFromCart, itemCount, clearCart } =
     useCart();
   const processedAddRequestRef = useRef("");
@@ -159,6 +161,12 @@ export default function Cart({ title }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (!user?.id || !user?.email) {
+      alert("Please login again to place your order securely.");
+      navigate("/login");
+      return;
+    }
+
     if (items.length === 0) {
       alert("Your cart is empty. Please add items before placing order.");
       return;
@@ -178,6 +186,8 @@ export default function Cart({ title }) {
     const orderPayload = {
       customer: {
         customerName: name,
+        customerUserId: String(user?.id || ""),
+        customerEmail: String(user?.email || "").toLowerCase(),
         mobileNumber,
         houseNumber: houseNo,
         streetName,

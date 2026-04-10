@@ -26,8 +26,8 @@ export default function OrderConfirmation({ title }) {
             <Link to="/products">
               <button type="button">Continue Shopping</button>
             </Link>
-            <Link to="/">
-              <button type="button">Go to Home</button>
+            <Link to="/orders">
+              <button type="button">Track My Order</button>
             </Link>
           </div>
         </div>

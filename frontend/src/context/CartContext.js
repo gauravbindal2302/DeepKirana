@@ -1,11 +1,16 @@
-import React, { createContext, useContext, useMemo, useReducer } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext(null);
-const CART_STORAGE_KEY = "deepstore_cart_items";
+const CART_STORAGE_KEY_PREFIX = "deepstore_cart_items";
 
-function getInitialCartItems() {
+function getStorageKey(userId) {
+  return `${CART_STORAGE_KEY_PREFIX}:${userId || "guest"}`;
+}
+
+function readCartItems(storageKey) {
   try {
-    const storedItems = localStorage.getItem(CART_STORAGE_KEY);
+    const storedItems = localStorage.getItem(storageKey);
     return storedItems ? JSON.parse(storedItems) : [];
   } catch (error) {
     console.error("Failed to parse cart items from storage:", error);
@@ -13,82 +18,64 @@ function getInitialCartItems() {
   }
 }
 
-function persistCartItems(items) {
+function persistCartItems(storageKey, items) {
   try {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    localStorage.setItem(storageKey, JSON.stringify(items));
   } catch (error) {
     console.error("Failed to persist cart items:", error);
   }
 }
 
-function cartReducer(state, action) {
-  switch (action.type) {
-    case "ADD_ITEM": {
-      const incomingItem = action.payload;
-      const existingItem = state.items.find(
-        (item) => item.id === incomingItem.id && item.weight === incomingItem.weight
-      );
-
-      let updatedItems = [];
-      if (existingItem) {
-        updatedItems = state.items.map((item) =>
-          item.id === incomingItem.id && item.weight === incomingItem.weight
-            ? { ...item, quantity: item.quantity + incomingItem.quantity }
-            : item
-        );
-      } else {
-        updatedItems = [...state.items, incomingItem];
-      }
-
-      persistCartItems(updatedItems);
-      return { ...state, items: updatedItems };
-    }
-
-    case "UPDATE_QUANTITY": {
-      const { id, weight, quantity } = action.payload;
-      const updatedItems = state.items.map((item) =>
-        item.id === id && item.weight === weight
-          ? { ...item, quantity: Math.max(1, quantity) }
-          : item
-      );
-      persistCartItems(updatedItems);
-      return { ...state, items: updatedItems };
-    }
-
-    case "REMOVE_ITEM": {
-      const { id, weight } = action.payload;
-      const updatedItems = state.items.filter(
-        (item) => !(item.id === id && item.weight === weight)
-      );
-      persistCartItems(updatedItems);
-      return { ...state, items: updatedItems };
-    }
-
-    case "CLEAR_CART": {
-      persistCartItems([]);
-      return { ...state, items: [] };
-    }
-
-    default:
-      return state;
-  }
-}
-
 export function CartProvider({ children }) {
-  const [state, dispatch] = useReducer(cartReducer, { items: getInitialCartItems() });
+  const { user, isAuthenticated } = useAuth();
+  const userCartKey = getStorageKey(isAuthenticated ? user?.id : "guest");
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    setItems(readCartItems(userCartKey));
+  }, [userCartKey]);
+
+  const updateItems = useCallback((updater) => {
+    setItems((prevItems) => {
+      const nextItems = typeof updater === "function" ? updater(prevItems) : updater;
+      persistCartItems(userCartKey, nextItems);
+      return nextItems;
+    });
+  }, [userCartKey]);
 
   const value = useMemo(
     () => ({
-      items: state.items,
-      itemCount: state.items.reduce((acc, item) => acc + item.quantity, 0),
-      addToCart: (item) => dispatch({ type: "ADD_ITEM", payload: item }),
+      items,
+      itemCount: items.reduce((acc, item) => acc + item.quantity, 0),
+      addToCart: (incomingItem) =>
+        updateItems((prevItems) => {
+          const existingItem = prevItems.find(
+            (item) => item.id === incomingItem.id && item.weight === incomingItem.weight
+          );
+          if (existingItem) {
+            return prevItems.map((item) =>
+              item.id === incomingItem.id && item.weight === incomingItem.weight
+                ? { ...item, quantity: item.quantity + incomingItem.quantity }
+                : item
+            );
+          }
+          return [...prevItems, incomingItem];
+        }),
       updateQuantity: (id, weight, quantity) =>
-        dispatch({ type: "UPDATE_QUANTITY", payload: { id, weight, quantity } }),
+        updateItems((prevItems) =>
+          prevItems.map((item) =>
+            item.id === id && item.weight === weight
+              ? { ...item, quantity: Math.max(1, quantity) }
+              : item
+          )
+        ),
       removeFromCart: (id, weight) =>
-        dispatch({ type: "REMOVE_ITEM", payload: { id, weight } }),
-      clearCart: () => dispatch({ type: "CLEAR_CART" }),
+        updateItems((prevItems) =>
+          prevItems.filter((item) => !(item.id === id && item.weight === weight))
+        ),
+      clearCart: () => updateItems([]),
     }),
-    [state.items]
+    [items, updateItems]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

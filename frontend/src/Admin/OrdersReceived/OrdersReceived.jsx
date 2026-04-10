@@ -7,6 +7,12 @@ export default function OrdersReceived({ title }) {
   const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const NEXT_STATUS = {
+    "Order Placed": "Order Confirmed",
+    "Order Confirmed": "Order Packed",
+    "Order Packed": "Out for Delivery",
+    "Out for Delivery": "Delivered",
+  };
 
   const fetchOrders = async () => {
     try {
@@ -20,23 +26,13 @@ export default function OrdersReceived({ title }) {
     }
   };
 
-  const handleConfirmOrder = async (orderId) => {
+  const handleUpdateOrderStatus = async (orderId, status) => {
     try {
-      await axios.patch(`${SERVER_URL}/orders/${orderId}/confirm`);
+      await axios.patch(`${SERVER_URL}/orders/${orderId}/status`, { status });
       fetchOrders();
     } catch (error) {
-      console.error("Error confirming order:", error);
-      alert("Unable to confirm order.");
-    }
-  };
-
-  const handleDeliveryStatus = async (orderId) => {
-    try {
-      await axios.patch(`${SERVER_URL}/orders/${orderId}/deliver`);
-      fetchOrders();
-    } catch (error) {
-      console.error("Error updating delivery status:", error);
-      alert("Unable to update delivery status.");
+      console.error("Error updating order status:", error);
+      alert(error?.response?.data?.error || "Unable to update order status.");
     }
   };
 
@@ -144,30 +140,26 @@ export default function OrdersReceived({ title }) {
                   </li>
                   <li>Mode of Payment = {order.paymentMethod}</li>
                   <li>Order Status = {order.orderStatus}</li>
-                  <li>Delivery Status = {order.deliveryStatus}</li>
                 </ul>
-                {order.orderStatus === "Confirmed" ? (
-                  <button className="confirm-order confirmed">
-                    Order Confirmed
-                  </button>
-                ) : (
+                {NEXT_STATUS[order.orderStatus] ? (
                   <button
-                    onClick={() => handleConfirmOrder(order._id)}
+                    onClick={() =>
+                      handleUpdateOrderStatus(order._id, NEXT_STATUS[order.orderStatus])
+                    }
                     className="confirm-order"
                   >
-                    Confirm Order
+                    Move to {NEXT_STATUS[order.orderStatus]}
                   </button>
+                ) : (
+                  <button className="confirm-order confirmed">{order.orderStatus}</button>
                 )}
-                {order.orderStatus === "Confirmed" &&
-                order.deliveryStatus !== "Sent" ? (
+                {order.orderStatus !== "Delivered" && order.orderStatus !== "Cancelled" ? (
                   <button
-                    onClick={() => handleDeliveryStatus(order._id)}
+                    onClick={() => handleUpdateOrderStatus(order._id, "Cancelled")}
                     className="delivery-status"
                   >
-                    Delivery Status
+                    Cancel Order
                   </button>
-                ) : order.deliveryStatus === "Sent" ? (
-                  <button className="delivery-status confirmed">Sent</button>
                 ) : null}
               </div>
             </div>

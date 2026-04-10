@@ -1,0 +1,168 @@
+.my-orders-page {
+  min-height: 68vh;
+  padding: 28px 24px 40px;
+  background: #f5f8fb;
+}
+
+.my-orders-head {
+  max-width: 1100px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.order-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.order-badges span {
+  background: #fff;
+  border: 1px solid #dbe4ef;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.orders-list {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+}
+
+.order-card {
+  background: #fff;
+  border: 1px solid #dee6f0;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.order-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.order-card-head h3 {
+  margin: 0;
+}
+
+.order-card-head p {
+  margin: 4px 0 0;
+  color: #607086;
+  font-size: 13px;
+}
+
+.order-status-chip {
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #ccd8e7;
+  background: #f8fbff;
+}
+
+.order-status-chip.Delivered {
+  color: #1f6a2a;
+  background: #e9f8eb;
+  border-color: #a9dfb0;
+}
+
+.order-status-chip.Cancelled {
+  color: #9b1d1d;
+  background: #fdeeee;
+  border-color: #f4bcbc;
+}
+
+.order-items-preview {
+  margin-top: 10px;
+  border-top: 1px dashed #d6deea;
+  border-bottom: 1px dashed #d6deea;
+  padding: 10px 0;
+}
+
+.order-items-preview p {
+  margin: 4px 0;
+  color: #2b3a4f;
+  font-size: 13px;
+}
+
+.order-timeline {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.timeline-step {
+  border: 1px solid #d7e0eb;
+  border-radius: 10px;
+  padding: 10px 8px;
+  text-align: center;
+  background: #f8fafc;
+}
+
+.timeline-step span {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: #d8e1eb;
+  color: #46566c;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.timeline-step p {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #526279;
+}
+
+.timeline-step.done,
+.timeline-step.active {
+  border-color: #2a6c3d;
+  background: #edf8f0;
+}
+
+.timeline-step.done span,
+.timeline-step.active span {
+  background: #2a6c3d;
+  color: #fff;
+}
+
+.order-cancelled-msg {
+  margin-top: 10px;
+  color: #a01f1f;
+  font-weight: 700;
+}
+
+.order-bill {
+  margin-top: 10px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.order-bill p {
+  margin: 0;
+  font-size: 13px;
+  color: #44546a;
+}
+
+.order-total {
+  font-weight: 800;
+}
+
+@media (max-width: 900px) {
+  .order-timeline {
+    grid-template-columns: 1fr;
+  }
+}
