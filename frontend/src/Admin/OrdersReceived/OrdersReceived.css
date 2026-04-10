@@ -109,6 +109,40 @@
   border: 2px solid #2c972f;
   cursor: not-allowed;
 }
+.confirm-order.status-order-placed {
+  background-color: #eaf1ff;
+  color: #1e4fa8;
+  border-color: #9fbaf1;
+}
+.confirm-order.status-order-confirmed {
+  background-color: #eef9f1;
+  color: #1f6a2a;
+  border-color: #a9dfb0;
+}
+.confirm-order.status-order-packed {
+  background-color: #fff6ea;
+  color: #955b12;
+  border-color: #efcc97;
+}
+.confirm-order.status-out-for-delivery {
+  background-color: #eef5ff;
+  color: #2d518d;
+  border-color: #abc2e8;
+}
+.confirm-order.status-delivered {
+  background-color: #e9f8eb;
+  color: #1f6a2a;
+  border-color: #a9dfb0;
+  cursor: not-allowed;
+}
+.confirm-order.status-cancelled {
+  background-color: #fdeeee;
+  color: #9b1d1d;
+  border-color: #f4bcbc;
+  cursor: not-allowed;
+  width: auto;
+  max-width: 100%;
+}
 
 /* For Tablet Screens */
 @media (max-width: 1024px) {

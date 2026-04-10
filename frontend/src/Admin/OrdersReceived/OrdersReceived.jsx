@@ -15,6 +15,17 @@ export default function OrdersReceived({ title }) {
     "Order Packed": "Out for Delivery",
     "Out for Delivery": "Delivered",
   };
+  const getStatusLabel = (order) =>
+    order.orderStatus === "Cancelled"
+      ? `Order Cancelled - By ${
+          order?.cancellation?.cancelledByRole === "admin" ? "Admin" : "User"
+        } (${order?.cancellation?.cancelledByName || "Unknown"})`
+      : order.orderStatus;
+
+  const getStatusClass = (status) =>
+    String(status || "")
+      .toLowerCase()
+      .replace(/\s+/g, "-");
 
   const fetchOrders = async () => {
     try {
@@ -161,12 +172,7 @@ export default function OrdersReceived({ title }) {
                   </li>
                   <li>Mode of Payment = {order.paymentMethod}</li>
                   <li>
-                    Order Status ={" "}
-                    {order.orderStatus === "Cancelled"
-                      ? `Order Cancelled - By ${
-                          order?.cancellation?.cancelledByRole === "admin" ? "Admin" : "User"
-                        } (${order?.cancellation?.cancelledByName || "Unknown"})`
-                      : order.orderStatus}
+                    Order Status = {getStatusLabel(order)}
                   </li>
                 </ul>
                 {NEXT_STATUS[order.orderStatus] ? (
@@ -174,12 +180,16 @@ export default function OrdersReceived({ title }) {
                     onClick={() =>
                       handleUpdateOrderStatus(order._id, NEXT_STATUS[order.orderStatus])
                     }
-                    className="confirm-order"
+                    className={`confirm-order status-${getStatusClass(order.orderStatus)}`}
                   >
                     Move to {NEXT_STATUS[order.orderStatus]}
                   </button>
                 ) : (
-                  <button className="confirm-order confirmed">{order.orderStatus}</button>
+                  <button
+                    className={`confirm-order confirmed status-${getStatusClass(order.orderStatus)}`}
+                  >
+                    {getStatusLabel(order)}
+                  </button>
                 )}
                 {order.orderStatus !== "Delivered" && order.orderStatus !== "Cancelled" ? (
                   <button
