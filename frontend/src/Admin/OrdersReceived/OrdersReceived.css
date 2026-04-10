@@ -16,6 +16,13 @@
   letter-spacing: 2px;
   font-family: "Courier New", Courier, monospace;
   font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-left: 18px;
+  padding-right: 18px;
+  flex-wrap: wrap;
 }
 .second-row {
   padding: 14px;
@@ -127,5 +134,9 @@
   .customer-details,
   .order-details {
     width: 100%;
+  }
+  .first-row {
+    justify-content: center;
+    text-align: center;
   }
 }

@@ -305,6 +305,10 @@ export default function Cart({ title }) {
                   </td>
                   <td className="cart-subtotal">
                     ₹{(item.price * item.quantity).toFixed(2)}
+                    <br />
+                    <small style={{ fontSize: "12px", color: "#65758a" }}>
+                      MRP: ₹{((item.mrp || item.price) * item.quantity).toFixed(2)}
+                    </small>
                   </td>
                 </tr>
               ))}

@@ -1036,6 +1036,12 @@ const orderSchema = new mongoose.Schema(
       ],
       default: "Order Placed",
     },
+    cancellation: {
+      cancelledByRole: { type: String, enum: ["user", "admin"], default: null },
+      cancelledByName: { type: String, default: "" },
+      cancellationReason: { type: String, default: "" },
+      cancelledAt: { type: Date, default: null },
+    },
     subtotal: { type: Number, required: true },
     deliveryCharge: { type: Number, required: true },
     totalAmount: { type: Number, required: true },
@@ -1249,7 +1255,25 @@ server.patch("/orders/:id/status", async (req, res) => {
     }
 
     if (nextStatus === "Cancelled") {
+      const cancelledByRole = String(req.body?.cancelledByRole || "").toLowerCase();
+      const cancelledByName = String(req.body?.cancelledByName || "").trim();
+      const cancellationReason = String(req.body?.cancellationReason || "").trim();
+      if (!["user", "admin"].includes(cancelledByRole)) {
+        return res.status(400).json({ error: "Cancelled by role is required." });
+      }
+      if (!cancelledByName) {
+        return res.status(400).json({ error: "Cancelled by name is required." });
+      }
+      if (cancelledByRole === "admin" && !cancellationReason) {
+        return res.status(400).json({ error: "Cancellation reason is required for admin." });
+      }
       order.orderStatus = "Cancelled";
+      order.cancellation = {
+        cancelledByRole,
+        cancelledByName: cancelledByName.split(/\s+/)[0],
+        cancellationReason,
+        cancelledAt: new Date(),
+      };
       await order.save();
       return res.status(200).json(order);
     }

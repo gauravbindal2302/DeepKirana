@@ -2,9 +2,11 @@ import { Header1 } from "../Admin";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./OrdersReceived.css";
+import { useAuth } from "../../context/AuthContext";
 
 export default function OrdersReceived({ title }) {
   const SERVER_URL = process.env.REACT_APP_DEPLOYED_SERVER_URL;
+  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const NEXT_STATUS = {
@@ -28,7 +30,23 @@ export default function OrdersReceived({ title }) {
 
   const handleUpdateOrderStatus = async (orderId, status) => {
     try {
-      await axios.patch(`${SERVER_URL}/orders/${orderId}/status`, { status });
+      let payload = { status };
+      if (status === "Cancelled") {
+        const cancellationReason = window
+          .prompt("Enter cancellation reason for customer:")
+          ?.trim();
+        if (!cancellationReason) {
+          alert("Cancellation reason is required.");
+          return;
+        }
+        payload = {
+          status,
+          cancelledByRole: "admin",
+          cancelledByName: String(user?.name || "Admin"),
+          cancellationReason,
+        };
+      }
+      await axios.patch(`${SERVER_URL}/orders/${orderId}/status`, payload);
       fetchOrders();
     } catch (error) {
       console.error("Error updating order status:", error);
@@ -52,7 +70,10 @@ export default function OrdersReceived({ title }) {
         ) : (
           orders.map((order) => (
           <div key={order._id} className="main-row">
-            <div className="first-row">Order Id: {order._id}</div>
+            <div className="first-row">
+              <span>Order Id: {order._id}</span>
+              <span>Customer Email: {order?.customer?.customerEmail || "N/A"}</span>
+            </div>
             <div className="second-row">
                 <div className="customer-details">
                   <h1>Customer Details</h1>
@@ -139,7 +160,14 @@ export default function OrdersReceived({ title }) {
                     {Number(order.totalAmount || 0).toFixed(2)}
                   </li>
                   <li>Mode of Payment = {order.paymentMethod}</li>
-                  <li>Order Status = {order.orderStatus}</li>
+                  <li>
+                    Order Status ={" "}
+                    {order.orderStatus === "Cancelled"
+                      ? `Order Cancelled - By ${
+                          order?.cancellation?.cancelledByRole === "admin" ? "Admin" : "User"
+                        } (${order?.cancellation?.cancelledByName || "Unknown"})`
+                      : order.orderStatus}
+                  </li>
                 </ul>
                 {NEXT_STATUS[order.orderStatus] ? (
                   <button

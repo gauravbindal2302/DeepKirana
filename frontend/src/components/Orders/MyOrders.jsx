@@ -21,6 +21,19 @@ export default function MyOrders({ title }) {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isCancellingOrderId, setIsCancellingOrderId] = useState("");
+  const [expandedBills, setExpandedBills] = useState({});
+
+  const formatFullDateTime = (dateValue) =>
+    new Date(dateValue).toLocaleString("en-IN", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
 
   useEffect(() => {
     document.title = title;
@@ -64,6 +77,52 @@ export default function MyOrders({ title }) {
     }
   }, [SERVER_URL, user?.email]);
 
+  const getCancelledLabel = (order) => {
+    const byRole = order?.cancellation?.cancelledByRole === "admin" ? "Admin" : "User";
+    const byName = order?.cancellation?.cancelledByName || "Unknown";
+    return `Order Cancelled - By ${byRole} (${byName})`;
+  };
+  const getCancelledShortLabel = (order) => {
+    const byRole = order?.cancellation?.cancelledByRole === "admin" ? "Admin" : "User";
+    return `Order Cancelled - By ${byRole}`;
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    try {
+      setIsCancellingOrderId(orderId);
+      await axios.patch(`${SERVER_URL}/orders/${orderId}/status`, {
+        status: "Cancelled",
+        cancelledByRole: "user",
+        cancelledByName: String(user?.name || "User"),
+      });
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === orderId
+            ? {
+                ...order,
+                orderStatus: "Cancelled",
+                cancellation: {
+                  cancelledByRole: "user",
+                  cancelledByName: String(user?.name || "User").split(/\s+/)[0],
+                  cancellationReason: "",
+                  cancelledAt: new Date().toISOString(),
+                },
+              }
+            : order
+        )
+      );
+    } catch (error) {
+      console.error("Failed to cancel order:", error);
+      setErrorMessage(error?.response?.data?.error || "Unable to cancel order right now.");
+    } finally {
+      setIsCancellingOrderId("");
+    }
+  };
+
+  const toggleBillDetails = (orderId) => {
+    setExpandedBills((prev) => ({ ...prev, [orderId]: !prev[orderId] }));
+  };
+
   const groupedCount = useMemo(
     () =>
       orders.reduce(
@@ -104,26 +163,36 @@ export default function MyOrders({ title }) {
               return (
                 <article className="order-card" key={order._id}>
                   <div className="order-card-head">
-                    <div>
-                      <h3>Order #{String(order._id).slice(-8)}</h3>
-                      <p>{new Date(order.createdAt).toLocaleString("en-IN")}</p>
+                    <div className="order-head-left">
+                      <h3>Order #{order._id}</h3>
+                      <p className="order-created-at">{formatFullDateTime(order.createdAt)}</p>
                     </div>
-                    <span className={`order-status-chip ${order.orderStatus.replace(/\s+/g, "-")}`}>
-                      {order.orderStatus}
-                    </span>
+                    <div className="order-head-right">
+                      <span className={`order-status-chip ${order.orderStatus.replace(/\s+/g, "-")}`}>
+                        {order.orderStatus === "Cancelled"
+                          ? getCancelledShortLabel(order)
+                          : order.orderStatus}
+                      </span>
+                      <button
+                        type="button"
+                        className="dropdown-toggle-text"
+                        onClick={() => toggleBillDetails(order._id)}
+                      >
+                        {expandedBills[order._id] ? "Hide Details" : "View Details"}
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="order-items-preview">
-                    {order.orderItems?.map((item, idx) => (
-                      <p key={`${order._id}-${idx}`}>
-                        {item.productName} ({item.productSize}) x {item.productQuantity}
-                      </p>
-                    ))}
+                  <div className="order-bill-summary">
+                    <p>
+                      Items: <strong>{order.orderItems?.length || 0}</strong>
+                    </p>
+                    <p>
+                      Total: <strong>Rs {Number(order.totalAmount || 0).toFixed(2)}</strong>
+                    </p>
                   </div>
 
-                  {order.orderStatus === "Cancelled" ? (
-                    <div className="order-cancelled-msg">This order was cancelled.</div>
-                  ) : (
+                  {order.orderStatus !== "Cancelled" ? (
                     <div className="order-timeline">
                       {ORDER_FLOW.map((status, idx) => (
                         <div
@@ -137,13 +206,69 @@ export default function MyOrders({ title }) {
                         </div>
                       ))}
                     </div>
-                  )}
+                  ) : null}
 
-                  <div className="order-bill">
-                    <p>Subtotal: Rs {Number(order.subtotal || 0).toFixed(2)}</p>
-                    <p>Delivery: Rs {Number(order.deliveryCharge || 0).toFixed(2)}</p>
-                    <p className="order-total">Total: Rs {Number(order.totalAmount || 0).toFixed(2)}</p>
-                  </div>
+                  {expandedBills[order._id] ? (
+                    <div className="order-bill">
+                      {order.orderStatus === "Cancelled" &&
+                      order?.cancellation?.cancelledByRole === "admin" ? (
+                        <p className="cancel-reason">
+                          <strong>Cancellation Reason:</strong>{" "}
+                          {order?.cancellation?.cancellationReason || "Not provided"}
+                        </p>
+                      ) : null}
+                      <table className="order-bill-table">
+                        <thead>
+                          <tr>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>MRP</th>
+                            <th>Price</th>
+                            <th>MRP Total</th>
+                            <th>Line Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {order.orderItems?.map((item, idx) => {
+                            const quantity = Number(item.productQuantity || 0);
+                            const price = Number(item.productPrice || 0);
+                            const mrp = Number(item.productMRP || item.productPrice || 0);
+                            const lineMrpTotal = quantity * mrp;
+                            const lineTotal = quantity * price;
+                            return (
+                              <tr key={`${order._id}-${idx}`}>
+                                <td>
+                                  {item.productName} ({item.productSize})
+                                </td>
+                                <td>{quantity}</td>
+                                <td>Rs {mrp.toFixed(2)}</td>
+                                <td>Rs {price.toFixed(2)}</td>
+                                <td>Rs {lineMrpTotal.toFixed(2)}</td>
+                                <td>Rs {lineTotal.toFixed(2)}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                      <div className="bill-totals">
+                        <p>Subtotal: Rs {Number(order.subtotal || 0).toFixed(2)}</p>
+                        <p>Delivery: Rs {Number(order.deliveryCharge || 0).toFixed(2)}</p>
+                        <p className="order-total">Total: Rs {Number(order.totalAmount || 0).toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ) : null}
+                  {["Order Placed", "Order Confirmed"].includes(order.orderStatus) ? (
+                    <div className="order-actions">
+                      <button
+                        type="button"
+                        className="cancel-order-btn"
+                        onClick={() => handleCancelOrder(order._id)}
+                        disabled={isCancellingOrderId === order._id}
+                      >
+                        {isCancellingOrderId === order._id ? "Cancelling..." : "Cancel Order"}
+                      </button>
+                    </div>
+                  ) : null}
                 </article>
               );
             })}

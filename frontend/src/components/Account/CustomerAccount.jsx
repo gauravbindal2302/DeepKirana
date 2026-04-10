@@ -16,6 +16,12 @@ export default function CustomerAccount() {
   const [message, setMessage] = useState("");
   const [recentOrders, setRecentOrders] = useState([]);
 
+  const getCancelledLabel = (order) => {
+    const byRole = order?.cancellation?.cancelledByRole === "admin" ? "Admin" : "User";
+    const byName = order?.cancellation?.cancelledByName || "Unknown";
+    return `Order Cancelled - By ${byRole} (${byName})`;
+  };
+
   const handleSaveProfile = async (event) => {
     event.preventDefault();
     setMessage("");
@@ -122,7 +128,9 @@ export default function CustomerAccount() {
                 {recentOrders.map((order) => (
                   <div key={order._id} className="recent-order-item">
                     <p>#{String(order._id).slice(-8)}</p>
-                    <span>{order.orderStatus}</span>
+                    <span>
+                      {order.orderStatus === "Cancelled" ? getCancelledLabel(order) : order.orderStatus}
+                    </span>
                   </div>
                 ))}
                 <Link to="/orders" className="recent-order-view-all">
