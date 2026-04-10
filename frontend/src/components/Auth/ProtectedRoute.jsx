@@ -16,7 +16,7 @@ export default function ProtectedRoute({ children, requiredRole }) {
   }
 
   if (requiredRole && user?.role !== requiredRole) {
-    const fallbackPath = user?.role === "admin" ? "/admin/dashboard" : "/account";
+    const fallbackPath = user?.role === "admin" ? "/admin/dashboard" : "/home";
     return <Navigate to={fallbackPath} replace />;
   }
 

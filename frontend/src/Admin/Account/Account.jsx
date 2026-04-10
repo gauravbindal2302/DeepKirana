@@ -253,7 +253,7 @@ export default function Account() {
     },
   ];
 
-  const targetPath = role === "admin" ? "/admin/dashboard" : "/account";
+  const targetPath = role === "admin" ? "/admin/dashboard" : "/home";
 
   const handleGoogleLogin = async () => {
     setErrorMessage("");
