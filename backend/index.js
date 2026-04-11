@@ -24,7 +24,7 @@ server.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const DB = process.env.DATABASE;
 const PORT = process.env.PORT;
 const SECRET_KEY = process.env.KEY;
-const SERVER_URL = process.env.API_URL;
+const SERVER_URL = process.env.API_URL || "http://localhost:5000";
 const STORE_PINCODE = String(process.env.STORE_PINCODE || "").replace(/\D/g, "");
 const STORE_LATITUDE = Number(process.env.STORE_LATITUDE || "28.6139");
 const STORE_LONGITUDE = Number(process.env.STORE_LONGITUDE || "77.209");
